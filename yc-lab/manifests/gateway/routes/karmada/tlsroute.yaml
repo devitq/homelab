@@ -1,0 +1,16 @@
+apiVersion: gateway.networking.k8s.io/v1
+kind: TLSRoute
+metadata:
+  name: karmada-api
+  namespace: karmada-system
+spec:
+  parentRefs:
+    - name: shared-gateway
+      namespace: gateway-system
+      sectionName: karmada-tls
+  hostnames:
+    - karmada.yc.infra.itqdev.xyz
+  rules:
+    - backendRefs:
+        - name: karmada-apiserver
+          port: 5443

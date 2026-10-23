@@ -1,0 +1,46 @@
+extends: default
+
+yaml-files:
+  - '*.yaml'
+  - '*.yml'
+  - '.yamllint.yaml'
+
+ignore: |
+  vendor/
+  node_modules/
+  charts/**/templates/**
+
+rules:
+  document-start: disable
+
+  line-length:
+    max: 120
+    level: warning
+
+  indentation:
+    spaces: 2
+    indent-sequences: consistent
+
+  truthy:
+    allowed-values: ['true', 'false']
+    check-keys: false
+
+  comments:
+    min-spaces-from-content: 1
+
+  braces:
+    max-spaces-inside: 1
+
+  brackets:
+    max-spaces-inside: 0
+
+  empty-lines:
+    max: 1
+    max-end: 1
+
+  trailing-spaces: enable
+  new-line-at-end-of-file: enable
+  key-duplicates: enable
+
+  hyphens:
+    max-spaces-after: 1

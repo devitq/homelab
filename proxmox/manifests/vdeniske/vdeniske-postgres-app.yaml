@@ -1,0 +1,25 @@
+apiVersion: external-secrets.io/v1
+kind: ExternalSecret
+metadata:
+  name: vdeniske-postgres-app
+  namespace: vdeniske
+spec:
+  secretStoreRef:
+    name: infisical
+    kind: ClusterSecretStore
+
+  target:
+    name: vdeniske-postgres-app
+    creationPolicy: Owner
+    template:
+      engineVersion: v2
+      type: Opaque
+      data:
+        uri: "{{ .postgresUri }}"
+
+  data:
+    - secretKey: postgresUri
+      remoteRef:
+        key: /vdeniske/VDENISKE_POSTGRES_URI
+
+  refreshInterval: 1h

@@ -1,0 +1,34 @@
+{
+  "name": "decoder/falco-json/0",
+  "enabled": true,
+  "parents": ["decoder/core-wazuh-message/0"],
+  "metadata": {
+    "title": "Falco JSON event",
+    "author": "Homelab",
+    "description": "Normalize Falco detections and their Kubernetes, container, process and user context."
+  },
+  "check": "exists($_tmp_json.rule) AND exists($_tmp_json.priority) AND exists($_tmp_json.output_fields)",
+  "normalize": [
+    {
+      "map": [
+        {"@timestamp": "get_date()"},
+        {"event.kind": "event"},
+        {"event.dataset": "falco"},
+        {"event.module": "falco"},
+        {"event.action": "$_tmp_json.rule"},
+        {"log.level": "$_tmp_json.priority"},
+        {"message": "$_tmp_json.output"},
+        {"host.name": "$_tmp_json.hostname"},
+        {"orchestrator.namespace": "$_tmp_json.output_fields.k8s\\.ns\\.name"},
+        {"orchestrator.resource.name": "$_tmp_json.output_fields.k8s\\.pod\\.name"},
+        {"container.id": "$_tmp_json.output_fields.container\\.id"},
+        {"container.name": "$_tmp_json.output_fields.container\\.name"},
+        {"container.image.name": "$_tmp_json.output_fields.container\\.image\\.repository"},
+        {"process.name": "$_tmp_json.output_fields.proc\\.name"},
+        {"process.executable": "$_tmp_json.output_fields.proc\\.exepath"},
+        {"process.command_line": "$_tmp_json.output_fields.proc\\.cmdline"},
+        {"user.name": "$_tmp_json.output_fields.user\\.name"}
+      ]
+    }
+  ]
+}

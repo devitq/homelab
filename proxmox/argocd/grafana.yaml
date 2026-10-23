@@ -1,0 +1,89 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: grafana
+  namespace: argocd
+spec:
+  project: default
+  source:
+    repoURL: oci://ghcr.io/grafana-community/helm-charts/grafana
+    path: .
+    targetRevision: 13.2.6
+    helm:
+      valuesObject:
+        replicas: 1
+        envValueFrom:
+          GF_AUTH_GENERIC_OAUTH_CLIENT_SECRET:
+            secretKeyRef:
+              name: grafana-secrets
+              key: client-secret
+
+        plugins:
+          - prometheus
+
+        grafana.ini:
+          plugins:
+            preinstall_auto_update: false
+
+          server:
+            root_url: https://grafana.internal.itqdev.xyz
+
+          auth:
+            disable_login_form: false
+            oauth_auto_login: false
+
+          auth.generic_oauth:
+            enabled: true
+            name: Keycloak
+            allow_sign_up: true
+            client_id: grafana-private
+            client_secret: ${GF_AUTH_GENERIC_OAUTH_CLIENT_SECRET}
+            scopes: openid profile email
+            use_pkce: true
+
+            auth_url: https://id.itqdev.xyz/realms/master/protocol/openid-connect/auth
+            token_url: https://id.itqdev.xyz/realms/master/protocol/openid-connect/token
+            api_url: https://id.itqdev.xyz/realms/master/protocol/openid-connect/userinfo
+
+            role_attribute_path: >
+              contains(groups[*], 'admin') && 'Admin' || contains(groups[*], 'editor') && 'Editor' || 'Viewer'
+            role_attribute_strict: false
+            use_refresh_token: true
+            id_token_attribute_name: preferred_username
+
+        sidecar:
+          dashboards:
+            enabled: true
+            label: grafana_dashboard
+            labelValue: "1"
+            searchNamespace: ALL
+            folderAnnotation: grafana_folder
+            provider:
+              allowUiUpdates: false
+          datasources:
+            enabled: true
+            label: grafana_datasource
+            labelValue: "1"
+            searchNamespace: ALL
+
+        resources:
+          requests:
+            cpu: 100m
+            memory: 256Mi
+          limits:
+            cpu: 500m
+            memory: 512Mi
+
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: grafana
+
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+      enabled: true
+    syncOptions:
+      - CreateNamespace=true
+      - ApplyOutOfSyncOnly=true
+      - ServerSideApply=true

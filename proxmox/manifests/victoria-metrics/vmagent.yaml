@@ -1,0 +1,31 @@
+apiVersion: operator.victoriametrics.com/v1beta1
+kind: VMAgent
+metadata:
+  name: main
+  namespace: observability
+spec:
+  remoteWrite:
+    - url: http://vmsingle-main:8429/api/v1/write
+
+  staticScrapeSelector: {}
+  staticScrapeNamespaceSelector: {}
+
+  serviceScrapeSelector: {}
+  serviceScrapeNamespaceSelector: {}
+
+  nodeScrapeSelector: {}
+  nodeScrapeNamespaceSelector: {}
+
+  podScrapeSelector: {}
+  podScrapeNamespaceSelector: {}
+
+  scrapeConfigSelector: {}
+  scrapeConfigNamespaceSelector: {}
+
+  resources:
+    requests:
+      cpu: 20m
+      memory: 64Mi
+    limits:
+      cpu: 100m
+      memory: 256Mi

@@ -1,0 +1,13 @@
+apiVersion: storage.k8s.io/v1
+kind: StorageClass
+metadata:
+  name: proxmox-hdd
+parameters:
+  csi.storage.k8s.io/fstype: ext4
+  storage: external-hdd-lvm
+  cache: none
+  ssd: "false"
+provisioner: csi.proxmox.sinextra.dev
+allowVolumeExpansion: true
+reclaimPolicy: Delete
+volumeBindingMode: WaitForFirstConsumer

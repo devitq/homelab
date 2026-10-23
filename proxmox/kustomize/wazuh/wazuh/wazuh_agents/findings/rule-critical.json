@@ -1,0 +1,18 @@
+{
+  "metadata": {
+    "title": "Falco critical: {{event.action}} on {{host.name}}",
+    "author": "Homelab",
+    "description": "A Falco runtime detection with Critical, Alert, or Emergency priority."
+  },
+  "enabled": true,
+  "status": "experimental",
+  "level": "critical",
+  "logsource": {"product": "falco"},
+  "detection": {
+    "condition": "selection",
+    "selection": {
+      "event.dataset": "falco",
+      "log.level": ["Critical", "Alert", "Emergency"]
+    }
+  }
+}

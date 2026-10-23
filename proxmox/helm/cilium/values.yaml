@@ -1,0 +1,112 @@
+prometheus:
+  enabled: true
+  port: 9962
+
+  serviceMonitor:
+    enabled: false
+
+ipam:
+  mode: kubernetes
+
+operator:
+  replicas: 1
+  resources:
+    requests:
+      cpu: 50m
+      memory: 64Mi
+    limits:
+      cpu: 500m
+      memory: 256Mi
+  prometheus:
+    enabled: true
+    port: 9963
+    metricsService: true
+    serviceMonitor:
+      enabled: false
+
+resources:
+  requests:
+    cpu: 250m
+    memory: 512Mi
+  limits:
+    cpu: 250m
+    memory: 512Mi
+
+kubeProxyReplacement: true
+
+securityContext:
+  capabilities:
+    ciliumAgent:
+      - CHOWN
+      - KILL
+      - NET_ADMIN
+      - NET_RAW
+      - IPC_LOCK
+      - SYS_ADMIN
+      - SYS_RESOURCE
+      - DAC_OVERRIDE
+      - FOWNER
+      - SETGID
+      - SETUID
+    cleanCiliumState:
+      - NET_ADMIN
+      - SYS_ADMIN
+      - SYS_RESOURCE
+
+envoy:
+  resources:
+    requests:
+      cpu: 100m
+      memory: 128Mi
+    limits:
+      memory: 1Gi
+  prometheus:
+    enabled: true
+    port: "9964"
+    serviceMonitor:
+      enabled: false
+
+cgroup:
+  autoMount:
+    enabled: false
+  hostRoot: /sys/fs/cgroup
+
+k8sServiceHost: localhost
+k8sServicePort: 7445
+
+gatewayAPI:
+  enabled: true
+  enableAlpn: true
+  enableAppProtocol: true
+
+hubble:
+  metrics:
+    enabled:
+      - dns
+      - drop
+      - tcp
+      - flow
+      - icmp
+
+    port: 9965
+    serviceMonitor:
+      enabled: false
+
+  relay:
+    enabled: true
+
+  ui:
+    enabled: false
+
+  peerService:
+    enabled: false
+    clusterDomain: cluster.local
+
+hostFirewall:
+  enabled: true
+
+l2announcements:
+  enabled: true
+
+bpf:
+  hostLegacyRouting: false

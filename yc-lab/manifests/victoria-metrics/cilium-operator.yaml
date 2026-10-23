@@ -1,0 +1,18 @@
+apiVersion: operator.victoriametrics.com/v1beta1
+kind: VMServiceScrape
+metadata:
+  name: cilium-operator
+  namespace: kube-system
+spec:
+  selector:
+    matchLabels:
+      io.cilium/app: operator
+
+  namespaceSelector:
+    matchNames:
+      - kube-system
+
+  endpoints:
+    - port: metrics
+      interval: 30s
+      scrapeTimeout: 10s

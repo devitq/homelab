@@ -1,0 +1,155 @@
+global:
+  image:
+    pullPolicy: IfNotPresent
+
+  edition: ee
+  gitlabVersion: 17.11.1
+
+  hosts:
+    domain: internal
+    externalIP: 127.0.0.1
+    https: false
+    hostSuffix: dev
+    gitlab:
+      name: gitlab.internal
+      https: false
+    registry:
+      name: gitlab-registry.internal
+      https: false
+    minio:
+      name: gitlab-minio.internal
+      https: false
+    kas:
+      name: gitlab-kas.internal
+      https: false
+    pages:
+      name: gitlab-pages.internal
+      https: false
+    ssh: gitlab.internal
+
+  ingress:
+    configureCertmanager: false
+    tls:
+      enabled: true
+
+  monitoring:
+    enabled: false
+
+  minio:
+    enabled: false
+
+  appConfig:
+    enableUsagePing: true
+    enableSeatLink: false
+    enableImpersonation: true
+    applicationSettingsCacheSeconds: 600
+    usernameChangingEnabled: false
+    defaultTheme: 3 # Neutral
+    defaultColorMode: 3 # gl-system
+    defaultSyntaxHighlightingTheme: 5 # monokai
+    webhookTimeout: 60
+    graphQlTimeout: 30
+
+    sentry:
+      enabled: true
+      dsn: https://cde7d107f667aa4dda7650a40aaaebfb@o4508946895863808.ingest.de.sentry.io/4508946910412880
+      clientside_dsn: https://5d1073900c413a0361dee72fe9a3cc38@o4508946895863808.ingest.de.sentry.io/4508946925224016
+      environment: production
+
+    object_store:
+      enabled: true
+      proxy_download: false
+      connection:
+        secret: gitlab-rails-storage
+        key: connection
+
+    gitlab_docs:
+      enabled: false
+
+  kas:
+    enabled: true
+    tls:
+      enabled: false
+      verify: false
+
+  spamcheck:
+    enabled: true
+
+  registry:
+    enabled: true
+    bucket: gitlab-registry
+
+    tls:
+      enabled: false
+
+  pages:
+    enabled: false
+
+  runner:
+    registrationToken:
+      secret: prod-gitlab-runner-secret
+
+  smtp:
+    enabled: true
+    address: smtp.office365.com
+    port: 587
+    authentication: login
+    starttls_auto: true
+    openssl_verify_mode: peer
+    open_timeout: 30
+    read_timeout: 60
+    user_name: gitlab@itqdev.xyz
+    password:
+      secret: smtp-password
+      key: password
+
+  email:
+    displayName: GitLab
+    from: gitlab@itqdev.xyz
+    subject_suffix: GitLab
+
+  time_zone: UTC
+
+  webservice:
+    workerTimeout: 60
+
+  extraEnv:
+    GITLAB_RAILS_CACHE_DEFAULT_TTL_SECONDS: 43200
+    GITLAB_CI_CONFIG_FETCH_TIMEOUT_SECONDS: 60
+    GITLAB_DISABLE_MARKDOWN_TIMEOUT: false
+    GITLAB_LFS_LINK_BATCH_SIZE: 1000
+    GITLAB_LFS_MAX_OID_TO_FETCH: 100000
+
+upgradeCheck:
+  enabled: false
+
+certmanager:
+  install: false
+
+  # TODO: Configure nginx-ingress
+
+prometheus:
+  install: false
+
+redis:
+  install: true
+  architecture: standalone
+  cluster:
+    enabled: false
+  metrics:
+    enabled: false
+
+postgresql:
+  install: true
+  metrics:
+    enabled: false
+
+sidekiq:
+  metrics:
+    enabled: true
+
+registry:
+  enabled: true
+
+gitlab-runner:
+  install: false

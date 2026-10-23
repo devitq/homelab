@@ -1,0 +1,3 @@
+machine:
+  install:
+    image: factory.talos.dev/installer/b6345a027254c5238c8e170d5d8e103f77fdd9b0857db9723ec9fc123e91d33f:v1.13.7

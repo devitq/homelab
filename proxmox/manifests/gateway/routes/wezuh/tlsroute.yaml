@@ -1,0 +1,16 @@
+apiVersion: gateway.networking.k8s.io/v1
+kind: TLSRoute
+metadata:
+  name: wazuh
+  namespace: wazuh
+spec:
+  parentRefs:
+    - name: shared-gateway
+      namespace: gateway-system
+      sectionName: wazuh-tls
+  hostnames:
+    - wazuh.internal.itqdev.xyz
+  rules:
+    - backendRefs:
+        - name: dashboard
+          port: 443

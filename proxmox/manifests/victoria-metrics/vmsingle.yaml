@@ -1,0 +1,21 @@
+apiVersion: operator.victoriametrics.com/v1beta1
+kind: VMSingle
+metadata:
+  name: main
+  namespace: observability
+spec:
+  retentionPeriod: "30d"
+
+  storage:
+    storageClassName: proxmox-hdd
+    resources:
+      requests:
+        storage: 64Gi
+
+  resources:
+    requests:
+      cpu: 50m
+      memory: 128Mi
+    limits:
+      cpu: 100m
+      memory: 512Mi

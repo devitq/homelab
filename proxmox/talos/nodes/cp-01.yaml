@@ -1,0 +1,17 @@
+machine:
+  network:
+    interfaces:
+      - interface: ens18
+        addresses:
+          - 10.13.45.1/16
+        routes:
+          - network: 0.0.0.0/0
+            gateway: 10.13.0.1
+
+  install:
+    disk: /dev/sda
+---
+apiVersion: v1alpha1
+kind: HostnameConfig
+auto: off
+hostname: cp-01.k8s.internal.itqdev.xyz

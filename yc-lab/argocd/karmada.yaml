@@ -1,0 +1,42 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: karmada
+  namespace: argocd
+spec:
+  project: default
+  source:
+    repoURL: https://raw.githubusercontent.com/karmada-io/karmada/master/charts
+    targetRevision: v1.19.0
+    chart: karmada
+    helm:
+      valuesObject:
+        controllerManager:
+          featureGates:
+            MultiClusterService: true
+
+        certs:
+          mode: auto
+          auto:
+            hosts:
+              - kubernetes.default.svc
+              - '*.etcd.{{ .Release.Namespace }}.svc.{{ .Values.clusterDomain }}'
+              - '*.{{ .Release.Namespace }}.svc.{{ .Values.clusterDomain }}'
+              - '*.{{ .Release.Namespace }}.svc'
+              - localhost
+              - 127.0.0.1
+              - karmada.yc.infra.itqdev.xyz
+
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: karmada-system
+
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+      enabled: true
+    syncOptions:
+      - CreateNamespace=true
+      - ApplyOutOfSyncOnly=true
+      - ServerSideApply=true

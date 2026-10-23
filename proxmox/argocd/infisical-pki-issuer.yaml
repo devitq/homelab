@@ -1,0 +1,27 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: infisical-pki-issuer
+  namespace: argocd
+spec:
+  project: default
+  source:
+    repoURL: https://dl.cloudsmith.io/public/infisical/helm-charts/helm/charts/
+    chart: infisical-pki-issuer
+    targetRevision: "*"
+    helm:
+      releaseName: infisical-pki-issuer
+
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: infisical-pki-issuer
+
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+      enabled: true
+    syncOptions:
+      - CreateNamespace=true
+      - ApplyOutOfSyncOnly=true
+      - ServerSideApply=true

@@ -1,0 +1,10 @@
+{
+  "category": "security",
+  "enabled": true,
+  "metadata": {
+    "title": "falco",
+    "author": "Homelab",
+    "description": "Falco runtime detections collected by the Wazuh agent.",
+    "references": ["https://falco.org/docs/concepts/alerts/"]
+  }
+}

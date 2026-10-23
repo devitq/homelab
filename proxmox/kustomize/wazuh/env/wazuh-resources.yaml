@@ -1,0 +1,14 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: wazuh-manager-worker
+  namespace: wazuh
+spec:
+  replicas: 1
+  template:
+    spec:
+      containers:
+        - name: wazuh-manager
+          env:
+            - name: WAZUH_INDEXER_HOSTS
+              value: 'wazuh-indexer-0.wazuh-indexer:9200'

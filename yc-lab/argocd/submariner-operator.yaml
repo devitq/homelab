@@ -1,0 +1,49 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: submariner-operator
+  namespace: argocd
+spec:
+  project: default
+  source:
+    repoURL: https://submariner-io.github.io/submariner-charts/charts
+    chart: submariner-operator
+    targetRevision: 0.24.1
+    helm:
+      valuesObject:
+        broker:
+          server: kubernetes.default.svc.cluster.local
+          namespace: submariner-operator
+
+        submariner:
+          brokerK8sSecret: submariner-k8s-broker-client-token # created by submariner-broker
+
+          clusterId: k3s-cloud
+          clusterCidr: 10.96.0.0/16
+          serviceCidr: 10.97.0.0/16
+
+          clustersetIpEnabled: false
+          loadBalancerEnabled: false
+          natEnabled: true
+
+          debug: false
+          serviceDiscovery: false
+          cableDriver: wireguard
+          healthcheckEnabled: true
+
+        ipsec:
+          pskSecret: submariner-ipsec-psk
+
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: submariner-operator
+
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+      enabled: true
+    syncOptions:
+      - CreateNamespace=true
+      - ApplyOutOfSyncOnly=true
+      - ServerSideApply=true

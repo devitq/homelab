@@ -1,0 +1,19 @@
+apiVersion: external-secrets.io/v1
+kind: ExternalSecret
+metadata:
+  name: gitlab-rails-storage
+  namespace: gitlab
+spec:
+  refreshInterval: 1h
+  secretStoreRef:
+    name: infisical
+    kind: ClusterSecretStore
+  target:
+    name: gitlab-rails-storage
+    creationPolicy: Owner
+    template:
+      type: Opaque
+  data:
+    - secretKey: connection
+      remoteRef:
+        key: /gitlab/RAILS_STORAGE_CONNECTION

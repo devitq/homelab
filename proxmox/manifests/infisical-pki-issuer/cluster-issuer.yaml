@@ -1,0 +1,18 @@
+apiVersion: infisical-issuer.infisical.com/v1alpha1
+kind: ClusterIssuer
+metadata:
+  name: infisical
+spec:
+  url: https://vault.itqdev.xyz
+  application: default
+  profile: default-letsencrypt-tls-server
+  authentication:
+    method: kubernetes
+    kubernetes:
+      identityIdRef:
+        name: infisical-identity
+        namespace: infisical-pki-issuer
+        key: identityId
+      serviceAccountRef:
+        name: infisical-issuer-auth
+        namespace: infisical-pki-issuer

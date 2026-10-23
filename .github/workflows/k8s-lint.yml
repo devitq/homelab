@@ -1,0 +1,45 @@
+name: Lint & validate Kubernetes manifests
+
+on:
+  pull_request:
+    paths:
+      - '**/*.yaml'
+      - '**/*.yml'
+  push:
+    branches: [main]
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-go@v5
+        with:
+          go-version: 'stable'
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.x'
+
+      - name: Install tools
+        run: |
+          pip install yamllint
+          go install github.com/google/yamlfmt/cmd/yamlfmt@latest
+          go install github.com/yannh/kubeconform/cmd/kubeconform@latest
+          go install golang.stackrox.io/kube-linter/cmd/kube-linter@latest
+          echo "$(go env GOPATH)/bin" >> "$GITHUB_PATH"
+
+      - name: yamllint
+        run: yamllint .
+
+      - name: yamlfmt (check only, no writes)
+        run: yamlfmt -lint .
+
+      - name: kube-linter
+        run: kube-linter lint --config .kube-linter.yaml proxmox/manifests
+
+      - name: kubeconform
+        run: |-
+          kubeconform -strict -summary -ignore-missing-schemas \
+            -kubernetes-version 1.36.1 proxmox/manifests

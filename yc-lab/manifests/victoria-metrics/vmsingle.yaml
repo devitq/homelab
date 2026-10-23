@@ -1,0 +1,21 @@
+apiVersion: operator.victoriametrics.com/v1beta1
+kind: VMSingle
+metadata:
+  name: main
+  namespace: observability
+spec:
+  retentionPeriod: 14d
+
+  storage:
+    storageClassName: local-path
+    resources:
+      requests:
+        storage: 8Gi
+
+  resources:
+    requests:
+      cpu: 50m
+      memory: 128Mi
+    limits:
+      cpu: 1000m
+      memory: 512Mi

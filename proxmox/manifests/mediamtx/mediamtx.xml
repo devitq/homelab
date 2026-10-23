@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<streaming>
+    <service>
+        <name>MediaMTX</name>
+        <servers>
+            <server>
+                <name>MediaMTX RTMP</name>
+                <url>srt://10.13.46.3:8890?streamid=publish:main</url>
+            </server>
+        </servers>
+
+        <profiles>
+            <profile>
+                <name>MediaMTX 1080p</name>
+                <video>
+                    <codec>H264</codec>
+                    <bitrate>8000000</bitrate>
+                    <resolution>1920x1080</resolution>
+                    <fps>30</fps>
+                </video>
+                <audio>
+                    <codec>AAC</codec>
+                    <bitrate>128000</bitrate>
+                </audio>
+            </profile>
+        </profiles>
+    </service>
+</streaming>

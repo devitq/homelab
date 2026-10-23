@@ -1,0 +1,4 @@
+machine:
+  install:
+    extraKernelArgs:
+      - talos.auditd.disabled=1

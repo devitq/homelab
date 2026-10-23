@@ -1,0 +1,22 @@
+apiVersion: external-secrets.io/v1
+kind: ExternalSecret
+metadata:
+  name: gitlab-runner-credentials
+  namespace: gitlab-runner
+spec:
+  refreshInterval: 1h
+  secretStoreRef:
+    name: infisical
+    kind: ClusterSecretStore
+  target:
+    name: gitlab-runner-credentials
+    creationPolicy: Owner
+    template:
+      type: Opaque
+      data:
+        runner-token: "{{ .runnerToken }}"
+        runner-registration-token: ""
+  data:
+    - secretKey: runnerToken
+      remoteRef:
+        key: /gitlab-runner/RUNNER_TOKEN

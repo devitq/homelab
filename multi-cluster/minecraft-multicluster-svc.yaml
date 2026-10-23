@@ -1,0 +1,13 @@
+apiVersion: networking.karmada.io/v1alpha1
+kind: MultiClusterService
+metadata:
+  name: minecraft-global
+  namespace: minecraft
+spec:
+  consumerClusters:
+    - name: k8s-yandex
+  providerClusters:
+    - name: k8s-proxmox
+  range: {}
+  types:
+    - CrossCluster

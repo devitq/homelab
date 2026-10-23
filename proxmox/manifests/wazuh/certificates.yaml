@@ -1,0 +1,95 @@
+apiVersion: external-secrets.io/v1
+kind: ExternalSecret
+metadata:
+  name: indexer-certs
+  namespace: wazuh
+spec:
+  refreshInterval: 1h
+  secretStoreRef:
+    name: infisical
+    kind: ClusterSecretStore
+  target:
+    name: indexer-certs
+    creationPolicy: Owner
+    template:
+      type: Opaque
+  data:
+    - secretKey: admin-key.pem
+      remoteRef:
+        key: /wazuh/INDEXER_ADMIN_KEY
+    - secretKey: admin.pem
+      remoteRef:
+        key: /wazuh/INDEXER_ADMIN_CERT
+    - secretKey: indexer-key.pem
+      remoteRef:
+        key: /wazuh/INDEXER_KEY
+    - secretKey: indexer.pem
+      remoteRef:
+        key: /wazuh/INDEXER_CERT
+    - secretKey: root-ca.pem
+      remoteRef:
+        key: /wazuh/ROOT_CA_CERT
+---
+apiVersion: external-secrets.io/v1
+kind: ExternalSecret
+metadata:
+  name: dashboard-certs
+  namespace: wazuh
+spec:
+  refreshInterval: 1h
+  secretStoreRef:
+    name: infisical
+    kind: ClusterSecretStore
+  target:
+    name: dashboard-certs
+    creationPolicy: Owner
+    template:
+      type: Opaque
+  data:
+    - secretKey: dashboard-key.pem
+      remoteRef:
+        key: /wazuh/DASHBOARD_KEY
+    - secretKey: dashboard.pem
+      remoteRef:
+        key: /wazuh/DASHBOARD_CERT
+    - secretKey: root-ca.pem
+      remoteRef:
+        key: /wazuh/ROOT_CA_CERT
+---
+apiVersion: external-secrets.io/v1
+kind: ExternalSecret
+metadata:
+  name: manager-certs
+  namespace: wazuh
+spec:
+  refreshInterval: 1h
+  secretStoreRef:
+    name: infisical
+    kind: ClusterSecretStore
+  target:
+    name: manager-certs
+    creationPolicy: Owner
+    template:
+      type: Opaque
+  data:
+    - secretKey: manager-key.pem
+      remoteRef:
+        key: /wazuh/MANAGER_KEY
+    - secretKey: manager.pem
+      remoteRef:
+        key: /wazuh/MANAGER_CERT
+    - secretKey: manager-remoted-key.pem
+      remoteRef:
+        key: /wazuh/MANAGER_REMOTED_KEY
+    - secretKey: manager-remoted.pem
+      remoteRef:
+        key: /wazuh/MANAGER_REMOTED_CERT
+    - secretKey: manager-apid-key.pem
+      remoteRef:
+        key: /wazuh/MANAGER_APID_KEY
+    - secretKey: manager-apid.pem
+      remoteRef:
+        key: /wazuh/MANAGER_APID_CERT
+    - secretKey: root-ca.pem
+      remoteRef:
+        key: /wazuh/ROOT_CA_CERT

@@ -1,0 +1,26 @@
+{
+  "name": "Falco Runtime Detections",
+  "type": "detector",
+  "detector_type": "falco",
+  "enabled": true,
+  "schedule": {
+    "period": {
+      "interval": 1,
+      "unit": "MINUTES"
+    }
+  },
+  "inputs": [
+    {
+      "detector_input": {
+        "description": "Falco Warning and higher events from Wazuh 5",
+        "indices": ["wazuh-events-v5-security"],
+        "custom_rules": [
+          {"id": "a9088c4a-748e-4622-8c28-f2d1b43aee9c"},
+          {"id": "7dce0e18-b662-45c7-a08f-4248378a92b2"}
+        ],
+        "pre_packaged_rules": []
+      }
+    }
+  ],
+  "triggers": []
+}

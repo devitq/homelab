@@ -1,0 +1,23 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: wazuh-indexer
+  namespace: wazuh
+spec:
+  replicas: 1
+  template:
+    spec:
+      containers:
+        - name: wazuh-indexer
+          resources:
+            requests:
+              cpu: 500m
+              memory: 1.3G
+            limits:
+              cpu: 500m
+              memory: 1.3G
+          env:
+            - name: OPENSEARCH_JAVA_OPTS
+              value: "-Xms384m -Xmx384m"
+            - name: discovery.seed_hosts
+              value: "wazuh-indexer-0.wazuh-indexer"

@@ -1,0 +1,29 @@
+apiVersion: operator.victoriametrics.com/v1beta1
+kind: VMStaticScrape
+metadata:
+  name: talos-etcd
+  namespace: observability
+  labels:
+    app.kubernetes.io/instance: victoria-metrics-k8s-stack
+spec:
+  jobName: kube-etcd
+  targetEndpoints:
+    - targets:
+        - 10.13.45.1:2379
+      labels:
+        job: kube-etcd
+        component: etcd
+      scheme: https
+      tlsConfig:
+        insecureSkipVerify: true
+        ca:
+          secret:
+            name: etcd-certs
+            key: ca.crt
+        cert:
+          secret:
+            name: etcd-certs
+            key: client.crt
+        keySecret:
+          name: etcd-certs
+          key: client.key

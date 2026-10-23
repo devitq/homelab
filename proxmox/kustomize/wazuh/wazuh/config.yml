@@ -1,0 +1,23 @@
+nodes:
+  indexer:
+    - name: indexer
+      dns:
+        - "wazuh-indexer"
+        - "wazuh-indexer.wazuh.svc.cluster.local"
+        - "wazuh-indexer-0.wazuh-indexer"
+        - "wazuh-indexer-0.wazuh-indexer.wazuh.svc.cluster.local"
+
+  manager:
+    - name: manager
+      dns:
+        - "wazuh-api"
+        - "wazuh-api.wazuh.svc.cluster.local"
+        - "wazuh-agents"
+        - "wazuh-agents.wazuh.svc.cluster.local"
+
+  dashboard:
+    - name: dashboard
+      dns:
+        - "dashboard"
+        - "dashboard.wazuh.svc.cluster.local"
+        - "wazuh.internal.itqdev.xyz"

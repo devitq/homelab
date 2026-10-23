@@ -1,0 +1,25 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: submariner-k8s-broker
+  namespace: argocd
+spec:
+  project: default
+  source:
+    repoURL: https://submariner-io.github.io/submariner-charts/charts
+    chart: submariner-k8s-broker
+    targetRevision: 0.24.1
+
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: submariner-operator
+
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+      enabled: true
+    syncOptions:
+      - CreateNamespace=true
+      - ApplyOutOfSyncOnly=true
+      - ServerSideApply=true

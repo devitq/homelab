@@ -1,0 +1,30 @@
+apiVersion: argoproj.io/v1alpha1
+kind: AppProject
+metadata:
+  name: default
+  namespace: argocd
+
+spec:
+  description: Default project with maintenance sync window
+
+  sourceRepos:
+    - "*"
+
+  destinations:
+    - namespace: "*"
+      server: "*"
+
+  syncWindows:
+    - kind: allow
+      schedule: "0 3 * * *"
+      duration: 1h
+      applications:
+        - "*"
+      manualSync: true
+
+    - kind: allow
+      schedule: "* * * * *"
+      duration: 24h
+      applications:
+        - "root-app"
+        - "manifests"

@@ -1,0 +1,49 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: submariner-operator
+  namespace: argocd
+spec:
+  project: default
+  source:
+    repoURL: https://git.itqdev.xyz/api/packages/ITQ/helm
+    chart: submariner-operator
+    targetRevision: 0.24.1
+    helm:
+      valuesObject:
+        broker:
+          server: k8s.nlb.infra.itqdev.xyz:8443
+          namespace: submariner-operator
+
+        submariner:
+          brokerK8sSecret: submariner-k8s-broker-remote-client-token # created manually
+
+          clusterId: k8s-proxmox
+          clusterCidr: 10.244.0.0/16
+          serviceCidr: 10.245.0.0/16
+
+          clustersetIpEnabled: false
+          loadBalancerEnabled: false
+          natEnabled: true
+
+          debug: false
+          serviceDiscovery: false
+          cableDriver: wireguard
+          healthcheckEnabled: true
+
+        ipsec:
+          pskSecret: submariner-ipsec-psk
+
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: submariner-operator
+
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+      enabled: true
+    syncOptions:
+      - CreateNamespace=true
+      - ApplyOutOfSyncOnly=true
+      - ServerSideApply=true

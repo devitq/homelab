@@ -1,0 +1,295 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: victoriametrics-k8s-cluster
+  namespace: argocd
+spec:
+  project: default
+  source:
+    repoURL: https://victoriametrics.github.io/helm-charts/
+    chart: victoria-metrics-k8s-stack
+    targetRevision: v0.91.2
+    helm:
+      skipCrds: true
+      valuesObject:
+        fullnameOverride: vm
+
+        serviceAccount:
+          create: false
+
+        victoria-metrics-operator:
+          enabled: false
+
+        defaultDashboards:
+          # -- Enable dashboard sync via sync-job
+          enabled: true
+
+          dashboards:
+            node-exporter-full:
+              enabled: false
+
+          sources:
+            node-exporter-full:
+              enabled: false
+            kube-prometheus:
+              enabled: false
+            victoriametrics-single-node:
+              enabled: true
+            victoriametrics-vmagent:
+              enabled: true
+            kubernetes-kubelet:
+              enabled: true
+              url: https://grafana.com/api/dashboards/16361/revisions/latest/download
+            kubernetes-controller-manager:
+              enabled: true
+              url: https://grafana.com/api/dashboards/16370/revisions/latest/download
+            kubernetes-scheduler:
+              enabled: true
+              url: https://grafana.com/api/dashboards/16362/revisions/latest/download
+
+        syncJob:
+          # -- Fetch dashboards and rules from upstream sources at deploy time.
+          # Creates ConfigMaps (for Grafana sidecar) or GrafanaDashboard CRDs and VMRules directly in the cluster.
+          # A new Job runs automatically whenever this config changes.
+          enabled: true
+
+        vlsingle:
+          enabled: false
+
+        vlcluster:
+          enabled: false
+
+        vldistributed:
+          enabled: false
+
+        vlagent:
+          enabled: false
+
+        vtsingle:
+          enabled: false
+
+        vtcluster:
+          enabled: false
+
+        vmsingle:
+          enabled: false
+
+        vmdistributed:
+          enabled: false
+
+        vmcluster:
+          enabled: false
+
+        alertmanager:
+          enabled: false
+
+        vmalert:
+          enabled: false
+
+        vmauth:
+          enabled: false
+
+        vmagent:
+          enabled: false
+
+        defaultDatasources:
+          grafanaOperator:
+            # -- Create datasources as CRDs (requires grafana-operator to be installed)
+            enabled: false
+            annotations: {}
+            spec:
+              instanceSelector:
+                matchLabels:
+                  dashboards: grafana
+              allowCrossNamespaceImport: false
+          victoriametrics:
+            # -- List of prometheus compatible datasource configurations.
+            # VM `url` will be added to each of them in templates.
+            datasources:
+              - name: VictoriaMetrics
+                type: prometheus
+                access: proxy
+                uid: VictoriaMetrics
+                isDefault: true
+              - name: VictoriaMetrics (DS)
+                isDefault: false
+                access: proxy
+                uid: VictoriaMetricsDS
+                type: victoriametrics-metrics-datasource
+          victorialogs:
+            # -- List of VictoriaLogs datasource configurations.
+            # VL `url` will be added to each of them in templates.
+            datasources:
+              - name: VictoriaLogs (DS)
+                access: proxy
+                uid: VictoriaLogs
+                type: victoriametrics-logs-datasource
+          victoriatraces:
+            # -- List of VictoriaTraces (Jaeger-compatible) datasource configurations.
+            # VT `url` will be added to each of them in templates.
+            datasources:
+              - name: VictoriaTraces
+                access: proxy
+                uid: VictoriaTraces
+                type: jaeger
+          # -- List of alertmanager datasources.
+          # VMAlertmanager generated `url` will be added to each datasource in template if alertmanager is enabled
+          alertmanager:
+            datasources:
+              - name: Alertmanager
+                access: proxy
+                uid: Alertmanager
+                jsonData:
+                  implementation: prometheus
+          # -- Configure additional grafana datasources (passed through tpl).
+          # Check [here](https://grafana.com/docs/grafana/latest/administration/provisioning/#data-sources) for details
+          extra: []
+          # - name: prometheus-sample
+          #   access: proxy
+          #   basicAuth: true
+          #   basicAuthPassword: pass
+          #   basicAuthUser: daco
+          #   editable: false
+          #   jsonData:
+          #     tlsSkipVerify: true
+          #   orgId: 1
+          #   type: prometheus
+          #   url: https://{{ printf "%s-prometheus.svc" .Release.Name }}:9090
+          #   version: 1
+
+        grafana:
+          enabled: false
+
+        defaultScrapeService:
+          namespace: kube-system
+
+        prometheus-node-exporter:
+          enabled: false
+
+        # -- kube-state-metrics dependency chart configuration. For possible values check [here](https://github.com/prometheus-community/helm-charts/blob/main/charts/kube-state-metrics/values.yaml)
+        kube-state-metrics:
+          enabled: false
+          # -- [Scrape configuration](https://docs.victoriametrics.com/operator/api/#vmservicescrapespec) for Kube State Metrics
+          vmScrape:
+            enabled: true
+            spec:
+              selector:
+                matchLabels:
+                  app.kubernetes.io/name: '{{ include "kube-state-metrics.name" (index .Subcharts "kube-state-metrics") }}'
+                  app.kubernetes.io/instance: '{{ include "vm.release" . }}'
+              endpoints:
+                - port: http
+                  honorLabels: true
+                  metricRelabelConfigs:
+                    - action: labeldrop
+                      regex: (uid|container_id|image_id)
+              jobLabel: app.kubernetes.io/name
+
+        kubelet:
+          enabled: true
+          vmScrapes:
+            cadvisor:
+              enabled: true
+            probes:
+              enabled: true
+            resources:
+              enabled: true
+
+        kubeApiServer:
+          enabled: true
+
+        kubeControllerManager:
+          enabled: true
+
+          service:
+            enabled: true
+
+          vmScrape:
+            spec:
+              jobLabel: app.kubernetes.io/component
+              namespaceSelector:
+                matchNames: []
+              endpoints:
+                - bearerTokenFile: /var/run/secrets/kubernetes.io/serviceaccount/token
+                  port: http-metrics
+                  scheme: https
+                  tlsConfig:
+                    caFile: /var/run/secrets/kubernetes.io/serviceaccount/ca.crt
+                    serverName: localhost
+                    insecureSkipVerify: true
+
+        kubeDns:
+          enabled: false
+
+        coreDns:
+          enabled: true
+
+          service:
+            enabled: true
+            selector:
+              k8s-app: coredns
+
+          vmScrape:
+            spec:
+              jobLabel: app.kubernetes.io/component
+              namespaceSelector:
+                matchNames: []
+              endpoints:
+                - port: http-metrics
+                  bearerTokenFile: /var/run/secrets/kubernetes.io/serviceaccount/token
+
+        kubeEtcd:
+          enabled: false
+
+        kubeScheduler:
+          enabled: true
+
+          service:
+            enabled: true
+
+          vmScrape:
+            spec:
+              jobLabel: app.kubernetes.io/component
+              namespaceSelector:
+                matchNames: []
+              endpoints:
+                - bearerTokenFile: /var/run/secrets/kubernetes.io/serviceaccount/token
+                  port: http-metrics
+                  scheme: https
+                  tlsConfig:
+                    caFile: /var/run/secrets/kubernetes.io/serviceaccount/ca.crt
+                    serverName: localhost
+                    insecureSkipVerify: true
+
+        kubeProxy:
+          enabled: true
+
+          service:
+            enabled: true
+
+          vmScrape:
+            spec:
+              jobLabel: app.kubernetes.io/component
+              namespaceSelector:
+                matchNames: []
+              endpoints:
+                - bearerTokenFile: /var/run/secrets/kubernetes.io/serviceaccount/token
+                  port: http-metrics
+                  scheme: https
+                  tlsConfig:
+                    caFile: /var/run/secrets/kubernetes.io/serviceaccount/ca.crt
+
+        internal: {}
+
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: observability
+
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
+      - ApplyOutOfSyncOnly=true
+      - ServerSideApply=true

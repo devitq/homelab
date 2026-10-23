@@ -1,0 +1,42 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: jellyfin
+  namespace: argocd
+spec:
+  project: default
+  source:
+    repoURL: https://jellyfin.github.io/jellyfin-helm
+    targetRevision: 3.2.0
+    chart: jellyfin
+    helm:
+      valuesObject:
+        replicaCount: 1
+        persistence:
+          config:
+            size: 16Gi
+          media:
+            size: 100Gi
+        metrics:
+          enabled: true
+        resources:
+          requests:
+            cpu: 1000m
+            memory: 512Mi
+          limits:
+            cpu: 4000m
+            memory: 2Gi
+
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: jellyfin
+
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+      enabled: true
+    syncOptions:
+      - CreateNamespace=true
+      - ApplyOutOfSyncOnly=true
+      - ServerSideApply=true

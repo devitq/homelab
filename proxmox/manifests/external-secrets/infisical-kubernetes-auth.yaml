@@ -1,0 +1,10 @@
+apiVersion: v1
+kind: Secret
+metadata:
+  name: infisical-kubernetes-auth
+  namespace: external-secrets
+  annotations:
+    argocd.argoproj.io/sync-wave: "-2"
+type: Opaque
+stringData:
+  identityId: 306b967d-5f24-4b78-bbb1-0b49d20c64b0

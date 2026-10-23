@@ -1,0 +1,16 @@
+{
+  "name": "decoder/core-wazuh-message/0",
+  "enabled": true,
+  "metadata": {
+    "title": "Wazuh message decoder for Falco",
+    "author": "Homelab",
+    "description": "Parse the agent's JSON log before Falco normalization."
+  },
+  "normalize": [
+    {
+      "map": [
+        {"_tmp_json": "parse_json($event.original)"}
+      ]
+    }
+  ]
+}

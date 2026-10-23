@@ -1,0 +1,116 @@
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  name: wazuh-falco-agent
+spec:
+  selector:
+    matchLabels:
+      app: wazuh-falco-agent
+  template:
+    metadata:
+      labels:
+        app: wazuh-falco-agent
+    spec:
+      automountServiceAccountToken: false
+      securityContext:
+        seccompProfile:
+          type: RuntimeDefault
+      volumes:
+        - name: agent-etc
+          hostPath:
+            path: /var/lib/wazuh-falco-agent/etc
+            type: DirectoryOrCreate
+        - name: falco-events
+          hostPath:
+            path: /var/log/falco
+            type: Directory
+      initContainers:
+        - name: initialize-agent-etc
+          image: wazuh/wazuh-agent:5.0.0-rc1
+          command:
+            - /bin/sh
+            - -c
+            - |
+              set -eu
+              if [ ! -f /agent-etc/ossec.conf ]; then
+                cp -a /var/ossec/etc/. /agent-etc/
+              fi
+              if ! grep -Fq '<location>/var/log/falco/events.json</location>' /agent-etc/ossec.conf; then
+                cat >> /agent-etc/ossec.conf <<'EOF'
+
+              <ossec_config>
+                <localfile>
+                  <location>/var/log/falco/events.json</location>
+                  <log_format>json</log_format>
+                </localfile>
+              </ossec_config>
+              EOF
+              fi
+              chown root:101 /agent-etc
+              chmod 0750 /agent-etc
+              for config in ossec.conf internal_options.conf local_internal_options.conf; do
+                if [ -f "/agent-etc/$config" ]; then
+                  chown root:101 "/agent-etc/$config"
+                  chmod 0640 "/agent-etc/$config"
+                fi
+              done
+              # The unprivileged agent writes downloaded shared configuration here.
+              chown 101:101 /agent-etc/shared
+              chmod 0750 /agent-etc/shared
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop: ["ALL"]
+              add: ["CHOWN", "DAC_OVERRIDE", "FOWNER"]
+          volumeMounts:
+            - name: agent-etc
+              mountPath: /agent-etc
+      containers:
+        - name: wazuh-agent
+          image: wazuh/wazuh-agent:5.0.0-rc1
+          resources:
+            requests:
+              cpu: 100m
+              memory: 64Mi
+            limits:
+              cpu: 300m
+              memory: 512Mi
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop: ["ALL"]
+              # The packaged agent drops privileges to its wazuh user.
+              add: ["CHOWN", "DAC_OVERRIDE", "FOWNER", "KILL", "SETGID", "SETUID", "SYS_CHROOT"]
+          startupProbe:
+            exec:
+              command:
+                - /bin/sh
+                - -c
+                - 'status=$(/var/ossec/bin/wazuh-control status) && ! printf "%s\n" "$status" | grep -q "not running"'
+            periodSeconds: 10
+            timeoutSeconds: 10
+            failureThreshold: 24
+          readinessProbe:
+            exec:
+              command:
+                - /bin/sh
+                - -c
+                - 'status=$(/var/ossec/bin/wazuh-control status) && ! printf "%s\n" "$status" | grep -q "not running"'
+            periodSeconds: 30
+            timeoutSeconds: 10
+          env:
+            - name: WAZUH_AGENT_NAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: spec.nodeName
+            - name: WAZUH_ENROLLMENT_TOKEN
+              valueFrom:
+                secretKeyRef:
+                  name: falco-agent-enrollment
+                  key: token
+          volumeMounts:
+            - name: agent-etc
+              mountPath: /var/ossec/etc
+            - name: falco-events
+              mountPath: /var/log/falco
+              readOnly: true

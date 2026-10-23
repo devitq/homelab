@@ -1,0 +1,38 @@
+cluster:
+  inlineManifests:
+    - name: argocd-ns
+      contents: |-
+        apiVersion: v1
+        kind: Namespace
+        metadata:
+          name: argocd
+    - name: metallb-system-ns
+      contents: |-
+        apiVersion: v1
+        kind: Namespace
+        metadata:
+          name: metallb-system
+    - name: proxmox-csi-plugin-ns
+      contents: |-
+        apiVersion: v1
+        kind: Namespace
+        metadata:
+          name: proxmox-csi-plugin
+    - name: gitlab-runner-ns
+      contents: |-
+        apiVersion: v1
+        kind: Namespace
+        metadata:
+          name: gitlab-runner
+    - name: observability-ns
+      contents: |-
+        apiVersion: v1
+        kind: Namespace
+        metadata:
+          name: observability
+    - name: backup-system-ns
+      contents: |-
+        apiVersion: v1
+        kind: Namespace
+        metadata:
+          name: backup-system

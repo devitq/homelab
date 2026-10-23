@@ -1,0 +1,30 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+resources:
+  - ../wazuh
+  - ../wazuh/wazuh_agents
+  - storage-class.yaml
+
+patches:
+  - path: indexer-resources.yaml
+  - path: wazuh-master-resources.yaml
+  - path: wazuh-resources.yaml
+
+replacements:
+  - source:
+      kind: ConfigMap
+      name: wazuh-storage-settings
+      fieldPath: data.storageClassName
+    targets:
+      - select:
+          kind: PersistentVolumeClaim
+        fieldPaths:
+          - spec.storageClassName
+        options:
+          create: true
+      - select:
+          kind: StatefulSet
+        fieldPaths:
+          - spec.volumeClaimTemplates.*.spec.storageClassName
+        options:
+          create: true

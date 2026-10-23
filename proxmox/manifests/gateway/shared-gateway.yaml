@@ -1,0 +1,83 @@
+apiVersion: gateway.networking.k8s.io/v1
+kind: Gateway
+metadata:
+  name: shared-gateway
+  namespace: gateway-system
+spec:
+  infrastructure:
+    annotations:
+      lbipam.cilium.io/ips: 10.13.46.1
+  gatewayClassName: cilium
+  listeners:
+    - name: http-redirect
+      port: 80
+      protocol: HTTP
+      allowedRoutes:
+        namespaces:
+          from: All
+
+    - name: headlamp-https
+      port: 443
+      protocol: HTTPS
+      hostname: k8s.internal.itqdev.xyz
+      tls:
+        mode: Terminate
+        certificateRefs:
+          - kind: Secret
+            group: ""
+            name: headlamp-tls
+      allowedRoutes:
+        namespaces:
+          from: All
+
+    - name: argocd-https
+      port: 443
+      protocol: HTTPS
+      hostname: argocd.internal.itqdev.xyz
+      tls:
+        mode: Terminate
+        certificateRefs:
+          - kind: Secret
+            group: ""
+            name: argocd-tls
+      allowedRoutes:
+        namespaces:
+          from: All
+
+    - name: grafana-https
+      port: 443
+      protocol: HTTPS
+      hostname: grafana.internal.itqdev.xyz
+      tls:
+        mode: Terminate
+        certificateRefs:
+          - kind: Secret
+            group: ""
+            name: grafana-tls
+      allowedRoutes:
+        namespaces:
+          from: All
+
+    - name: jellyfin-https
+      port: 443
+      protocol: HTTPS
+      hostname: jellyfin.itqdev.xyz
+      tls:
+        mode: Terminate
+        certificateRefs:
+          - kind: Secret
+            group: ""
+            name: jellyfin-tls
+      allowedRoutes:
+        namespaces:
+          from: All
+
+    - name: wazuh-tls
+      port: 443
+      protocol: TLS
+      hostname: wazuh.internal.itqdev.xyz
+      tls:
+        mode: Passthrough
+      allowedRoutes:
+        namespaces:
+          from: All

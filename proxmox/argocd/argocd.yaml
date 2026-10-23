@@ -1,0 +1,156 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: argocd
+  namespace: argocd
+spec:
+  project: default
+  source:
+    repoURL: https://argoproj.github.io/argo-helm
+    targetRevision: 10.4.2
+    chart: argo-cd
+    helm:
+      valuesObject:
+        redis-ha:
+          enabled: false
+
+        redis:
+          image:
+            repository: docker.io/redis
+          resources:
+            requests:
+              cpu: 20m
+              memory: 32Mi
+            limits:
+              cpu: 100m
+              memory: 64Mi
+
+        controller:
+          replicas: 1
+
+          resources:
+            requests:
+              cpu: 50m
+              memory: 512Mi
+            limits:
+              cpu: 150m
+              memory: 1Gi
+
+          env:
+            - name: GOGC
+              value: "50"
+            - name: GOMEMLIMIT
+              value: "800MiB"
+
+        server:
+          autoscaling:
+            enabled: false
+            minReplicas: 1
+          resources:
+            requests:
+              cpu: 25m
+              memory: 64Mi
+            limits:
+              cpu: 100m
+              memory: 128Mi
+
+        repoServer:
+          autoscaling:
+            enabled: false
+            minReplicas: 1
+          resources:
+            requests:
+              cpu: 25m
+              memory: 64Mi
+            limits:
+              cpu: 100m
+              memory: 256Mi
+
+        applicationSet:
+          resources:
+            requests:
+              cpu: 10m
+              memory: 32Mi
+            limits:
+              cpu: 50m
+              memory: 64Mi
+
+        notifications:
+          enabled: false
+
+        dex:
+          enabled: false
+
+        configs:
+          params:
+            server.insecure: "true"
+
+          cm:
+            url: https://argocd.internal.itqdev.xyz
+
+            timeout.reconciliation: "10m"
+
+            resource.exclusions: |
+              - apiGroups:
+                  - ""
+                kinds:
+                  - Event
+                clusters:
+                  - "*"
+
+              - apiGroups:
+                  - "events.k8s.io"
+                kinds:
+                  - Event
+                clusters:
+                  - "*"
+
+              - apiGroups:
+                  - ""
+                kinds:
+                  - Endpoints
+                clusters:
+                  - "*"
+
+              - apiGroups:
+                  - "discovery.k8s.io"
+                kinds:
+                  - EndpointSlice
+                clusters:
+                  - "*"
+
+              - apiGroups:
+                  - "metrics.k8s.io"
+                kinds:
+                  - "*"
+                clusters:
+                  - "*"
+
+              - apiGroups:
+                  - "coordination.k8s.io"
+                kinds:
+                  - Lease
+                clusters:
+                  - "*"
+
+            oidc.config: |
+              name: Keycloak
+              issuer: https://id.itqdev.xyz/realms/master
+              clientID: argocd
+              clientSecret: $oidc.keycloak.clientSecret
+              refreshTokenThreshold: 2m
+              requestedScopes: ["openid", "profile", "email", "groups"]
+
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: argocd
+
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+      enabled: true
+    syncOptions:
+      - CreateNamespace=true
+      - ApplyOutOfSyncOnly=true
+      - ServerSideApply=true

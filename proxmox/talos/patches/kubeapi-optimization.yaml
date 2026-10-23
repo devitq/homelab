@@ -1,0 +1,21 @@
+cluster:
+  apiServer:
+    extraArgs:
+      event-ttl: "15m"
+      default-not-ready-toleration-seconds: "20"
+      default-unreachable-toleration-seconds: "20"
+
+      default-watch-cache-size: "50"
+      enable-aggregator-routing: "true"
+      watch-cache: "false"
+
+      etcd-compaction-interval: "2m"
+      etcd-count-metric-poll-period: "1m"
+      storage-backend: "etcd3"
+      livez-grace-period: "30s"
+      shutdown-delay-duration: "15s"
+      request-timeout: "1m"
+
+      enable-priority-and-fairness: "false"
+      profiling: "false"
+      authentication-token-webhook-cache-ttl: "30s"

@@ -1,0 +1,3 @@
+creation_rules:
+  - path_regex: '\.yaml$'
+    pgp: B13C2DAF24268258F525697A063A10A651314CE9

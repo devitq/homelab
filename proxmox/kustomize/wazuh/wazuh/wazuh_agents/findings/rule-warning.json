@@ -1,0 +1,18 @@
+{
+  "metadata": {
+    "title": "Falco: {{event.action}} on {{host.name}}",
+    "author": "Homelab",
+    "description": "A Falco runtime detection with Warning or Error priority."
+  },
+  "enabled": true,
+  "status": "experimental",
+  "level": "medium",
+  "logsource": {"product": "falco"},
+  "detection": {
+    "condition": "selection",
+    "selection": {
+      "event.dataset": "falco",
+      "log.level": ["Warning", "Error"]
+    }
+  }
+}

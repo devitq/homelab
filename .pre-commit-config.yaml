@@ -1,0 +1,27 @@
+repos:
+  - repo: https://github.com/adrienverge/yamllint.git
+    rev: v1.38.0
+    hooks:
+      - id: yamllint
+        args: [--strict]
+
+  - repo: local
+    hooks:
+      - id: yamlfmt
+        name: yamlfmt (format YAML)
+        entry: yamlfmt
+        language: system
+        types: [yaml]
+
+      - id: kubeconform
+        name: kubeconform (validate against k8s API schema)
+        entry: kubeconform -strict -summary -ignore-missing-schemas -kubernetes-version 1.34.0
+        language: system
+        files: ^proxmox/manifests/.*\.ya?ml$
+
+      - id: kube-linter
+        name: kube-linter (best-practice & security checks)
+        entry: kube-linter lint --config .kube-linter.yaml proxmox/manifests
+        language: system
+        pass_filenames: false
+        files: ^proxmox/manifests/.*\.ya?ml$

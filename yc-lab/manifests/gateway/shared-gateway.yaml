@@ -1,0 +1,66 @@
+apiVersion: gateway.networking.k8s.io/v1
+kind: Gateway
+metadata:
+  name: shared-gateway
+  namespace: gateway-system
+spec:
+  gatewayClassName: cilium
+  listeners:
+    - name: http-redirect
+      port: 80
+      protocol: HTTP
+      allowedRoutes:
+        namespaces:
+          from: All
+
+    - name: headlamp-https
+      port: 443
+      protocol: HTTPS
+      hostname: k8s.yc.infra.itqdev.xyz
+      tls:
+        mode: Terminate
+        certificateRefs:
+          - kind: Secret
+            group: ""
+            name: headlamp-tls
+      allowedRoutes:
+        namespaces:
+          from: All
+
+    - name: argocd-https
+      port: 443
+      protocol: HTTPS
+      hostname: argocd.yc.infra.itqdev.xyz
+      tls:
+        mode: Terminate
+        certificateRefs:
+          - kind: Secret
+            group: ""
+            name: argocd-tls
+      allowedRoutes:
+        namespaces:
+          from: All
+
+    - name: grafana-https
+      port: 443
+      protocol: HTTPS
+      hostname: grafana.yc.infra.itqdev.xyz
+      tls:
+        mode: Terminate
+        certificateRefs:
+          - kind: Secret
+            group: ""
+            name: grafana-tls
+      allowedRoutes:
+        namespaces:
+          from: All
+
+    - name: karmada-tls
+      port: 443
+      protocol: TLS
+      hostname: karmada.yc.infra.itqdev.xyz
+      tls:
+        mode: Passthrough
+      allowedRoutes:
+        namespaces:
+          from: All

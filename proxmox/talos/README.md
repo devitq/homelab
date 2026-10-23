@@ -27,7 +27,7 @@ talosctl gen config cluster https://10.13.45.1:6443 \
 	--kubernetes-version 1.36.2 --talos-version 1.13 \
 	-o rendered/cp-01.yaml --output-types controlplane \
 	--additional-sans k8s.lan,k8s.itqdev.xyz --with-cluster-discovery --with-docs --with-examples \
-	--with-secrets secrets.yaml \
+	--with-secrets secrets.dec.yaml \
 	--config-patch @patches/allow-controlplane-workloads.yaml \
 	--config-patch @patches/disable-cni-and-kubeproxy.yaml \
 	--config-patch @patches/enable-user-namespaces.yaml \

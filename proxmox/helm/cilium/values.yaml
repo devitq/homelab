@@ -59,7 +59,7 @@ envoy:
       cpu: 100m
       memory: 128Mi
     limits:
-      memory: 1Gi
+      memory: 384Mi
   prometheus:
     enabled: true
     port: "9964"

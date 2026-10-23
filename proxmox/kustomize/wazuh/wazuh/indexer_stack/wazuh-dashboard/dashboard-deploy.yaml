@@ -90,7 +90,7 @@ spec:
           resources:
             limits:
               cpu: 500m
-              memory: 1Gi
+              memory: 640Mi
           volumeMounts:
             - name: wazuh-credentials
               mountPath: /run/secrets

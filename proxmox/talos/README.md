@@ -47,3 +47,10 @@ talosctl gen config cluster https://10.13.45.1:6443 \
 
 talosctl apply-config -n 10.13.10.164 -f rendered/cp-01.yaml --insecure -m auto
 ```
+
+## Troubleshooting
+
+```bash
+talosctl processes
+talosctl cgroups
+```

@@ -1,0 +1,1829 @@
+apiVersion: v1
+data:
+  dashboard.json: |
+    {
+      "apiVersion": "dashboard.grafana.app/v2",
+      "kind": "Dashboard",
+      "metadata": {
+        "name": "pvc",
+        "generation": 2,
+        "creationTimestamp": "2026-11-05T14:22:27Z",
+        "labels": {},
+        "annotations": {}
+      },
+      "spec": {
+        "annotations": [
+          {
+            "kind": "AnnotationQuery",
+            "spec": {
+              "query": {
+                "kind": "DataQuery",
+                "group": "grafana",
+                "version": "v0",
+                "spec": {}
+              },
+              "enable": true,
+              "hide": true,
+              "iconColor": "rgba(0, 211, 255, 1)",
+              "name": "Annotations & Alerts",
+              "builtIn": true,
+              "legacyOptions": {
+                "limit": 100,
+                "showIn": 0
+              }
+            }
+          }
+        ],
+        "cursorSync": "Off",
+        "description": "Monitors all persistent volumes that exists within a Kubernetes cluster. Prometheus is used as datasource. ",
+        "editable": true,
+        "elements": {
+          "panel-11": {
+            "kind": "Panel",
+            "spec": {
+              "id": 11,
+              "title": "Hourly Volume Usage Rate",
+              "description": "",
+              "links": [],
+              "data": {
+                "kind": "QueryGroup",
+                "spec": {
+                  "queries": [
+                    {
+                      "kind": "PanelQuery",
+                      "spec": {
+                        "query": {
+                          "kind": "DataQuery",
+                          "group": "prometheus",
+                          "version": "v0",
+                          "spec": {
+                            "expr": "rate(kubelet_volume_stats_used_bytes{namespace=~\"${k8s_namespace}\"}[1h])",
+                            "instant": false,
+                            "interval": "",
+                            "legendFormat": "{{namespace}} ({{persistentvolumeclaim}})"
+                          },
+                          "labels": {
+                            "grafana.app/export-label": "prometheus-1",
+                            "grafana.app/export-datasource-name": "VictoriaMetrics"
+                          }
+                        },
+                        "refId": "A",
+                        "hidden": false
+                      }
+                    }
+                  ],
+                  "transformations": [],
+                  "queryOptions": {}
+                }
+              },
+              "vizConfig": {
+                "kind": "VizConfig",
+                "group": "timeseries",
+                "version": "7.2.1",
+                "spec": {
+                  "options": {
+                    "alertThreshold": true
+                  },
+                  "fieldConfig": {
+                    "defaults": {},
+                    "overrides": []
+                  }
+                }
+              }
+            }
+          },
+          "panel-12": {
+            "kind": "Panel",
+            "spec": {
+              "id": 12,
+              "title": "Daily Volume Usage Rate",
+              "description": "",
+              "links": [],
+              "data": {
+                "kind": "QueryGroup",
+                "spec": {
+                  "queries": [
+                    {
+                      "kind": "PanelQuery",
+                      "spec": {
+                        "query": {
+                          "kind": "DataQuery",
+                          "group": "prometheus",
+                          "version": "v0",
+                          "spec": {
+                            "expr": "rate(kubelet_volume_stats_used_bytes{namespace=~\"${k8s_namespace}\"}[1d])",
+                            "interval": "",
+                            "legendFormat": "{{namespace}} ({{persistentvolumeclaim}})"
+                          },
+                          "labels": {
+                            "grafana.app/export-label": "prometheus-1",
+                            "grafana.app/export-datasource-name": "VictoriaMetrics"
+                          }
+                        },
+                        "refId": "A",
+                        "hidden": false
+                      }
+                    }
+                  ],
+                  "transformations": [],
+                  "queryOptions": {}
+                }
+              },
+              "vizConfig": {
+                "kind": "VizConfig",
+                "group": "timeseries",
+                "version": "7.2.1",
+                "spec": {
+                  "options": {
+                    "alertThreshold": true
+                  },
+                  "fieldConfig": {
+                    "defaults": {},
+                    "overrides": []
+                  }
+                }
+              }
+            }
+          },
+          "panel-13": {
+            "kind": "Panel",
+            "spec": {
+              "id": 13,
+              "title": "Weekly Volume Usage Rate",
+              "description": "",
+              "links": [],
+              "data": {
+                "kind": "QueryGroup",
+                "spec": {
+                  "queries": [
+                    {
+                      "kind": "PanelQuery",
+                      "spec": {
+                        "query": {
+                          "kind": "DataQuery",
+                          "group": "prometheus",
+                          "version": "v0",
+                          "spec": {
+                            "expr": "rate(kubelet_volume_stats_used_bytes{namespace=~\"${k8s_namespace}\"}[1w])",
+                            "instant": false,
+                            "interval": "",
+                            "legendFormat": "{{namespace}} ({{persistentvolumeclaim}})"
+                          },
+                          "labels": {
+                            "grafana.app/export-label": "prometheus-1",
+                            "grafana.app/export-datasource-name": "VictoriaMetrics"
+                          }
+                        },
+                        "refId": "A",
+                        "hidden": false
+                      }
+                    }
+                  ],
+                  "transformations": [],
+                  "queryOptions": {}
+                }
+              },
+              "vizConfig": {
+                "kind": "VizConfig",
+                "group": "timeseries",
+                "version": "7.2.1",
+                "spec": {
+                  "options": {
+                    "alertThreshold": true
+                  },
+                  "fieldConfig": {
+                    "defaults": {},
+                    "overrides": []
+                  }
+                }
+              }
+            }
+          },
+          "panel-21": {
+            "kind": "Panel",
+            "spec": {
+              "id": 21,
+              "title": "PVCs Above Warning Threshold",
+              "description": "",
+              "links": [],
+              "data": {
+                "kind": "QueryGroup",
+                "spec": {
+                  "queries": [
+                    {
+                      "kind": "PanelQuery",
+                      "spec": {
+                        "query": {
+                          "kind": "DataQuery",
+                          "group": "prometheus",
+                          "version": "v0",
+                          "spec": {
+                            "expr": "count (max by (persistentvolumeclaim,namespace) (kubelet_volume_stats_used_bytes{namespace=~\"${k8s_namespace}\"} ) and (max by (persistentvolumeclaim,namespace) (kubelet_volume_stats_used_bytes{namespace=~\"${k8s_namespace}\"} )) / (max by (persistentvolumeclaim,namespace) (kubelet_volume_stats_capacity_bytes{namespace=~\"${k8s_namespace}\"} )) >= (${warning_threshold} / 100)) or vector (0)",
+                            "instant": true,
+                            "interval": "",
+                            "legendFormat": ""
+                          },
+                          "labels": {
+                            "grafana.app/export-label": "prometheus-1",
+                            "grafana.app/export-datasource-name": "VictoriaMetrics"
+                          }
+                        },
+                        "refId": "A",
+                        "hidden": false
+                      }
+                    }
+                  ],
+                  "transformations": [],
+                  "queryOptions": {}
+                }
+              },
+              "vizConfig": {
+                "kind": "VizConfig",
+                "group": "stat",
+                "version": "13.2.2",
+                "spec": {
+                  "options": {
+                    "colorMode": "background",
+                    "graphMode": "area",
+                    "justifyMode": "auto",
+                    "orientation": "auto",
+                    "percentChangeColorMode": "standard",
+                    "reduceOptions": {
+                      "calcs": [
+                        "mean"
+                      ],
+                      "fields": "",
+                      "values": false
+                    },
+                    "showPercentChange": false,
+                    "textMode": "auto",
+                    "wideLayout": true
+                  },
+                  "fieldConfig": {
+                    "defaults": {
+                      "unit": "none",
+                      "thresholds": {
+                        "mode": "absolute",
+                        "steps": [
+                          {
+                            "value": 0,
+                            "color": "semi-dark-red"
+                          },
+                          {
+                            "value": -0.0001,
+                            "color": "light-green"
+                          },
+                          {
+                            "value": 0.0001,
+                            "color": "semi-dark-red"
+                          }
+                        ]
+                      },
+                      "color": {
+                        "mode": "thresholds"
+                      },
+                      "noValue": "--"
+                    },
+                    "overrides": []
+                  }
+                }
+              }
+            }
+          },
+          "panel-22": {
+            "kind": "Panel",
+            "spec": {
+              "id": 22,
+              "title": "PVCs Full in 2 days - Based on Daily Usage",
+              "description": "",
+              "links": [],
+              "data": {
+                "kind": "QueryGroup",
+                "spec": {
+                  "queries": [
+                    {
+                      "kind": "PanelQuery",
+                      "spec": {
+                        "query": {
+                          "kind": "DataQuery",
+                          "group": "prometheus",
+                          "version": "v0",
+                          "spec": {
+                            "expr": "(\n  count (\n    (kubelet_volume_stats_available_bytes{namespace=~\"${k8s_namespace}\"})\n    and\n    (predict_linear(kubelet_volume_stats_available_bytes{namespace=~\"${k8s_namespace}\"}[1d], 2 * 24 * 60 * 60) < 0)\n  )\n)\nor\nvector(0)",
+                            "instant": true,
+                            "interval": "",
+                            "legendFormat": ""
+                          },
+                          "labels": {
+                            "grafana.app/export-label": "prometheus-1",
+                            "grafana.app/export-datasource-name": "VictoriaMetrics"
+                          }
+                        },
+                        "refId": "A",
+                        "hidden": false
+                      }
+                    }
+                  ],
+                  "transformations": [
+                    {
+                      "kind": "Transformation",
+                      "group": "organize",
+                      "spec": {
+                        "options": {}
+                      }
+                    }
+                  ],
+                  "queryOptions": {}
+                }
+              },
+              "vizConfig": {
+                "kind": "VizConfig",
+                "group": "stat",
+                "version": "13.2.2",
+                "spec": {
+                  "options": {
+                    "colorMode": "background",
+                    "graphMode": "area",
+                    "justifyMode": "auto",
+                    "orientation": "auto",
+                    "percentChangeColorMode": "standard",
+                    "reduceOptions": {
+                      "calcs": [
+                        "mean"
+                      ],
+                      "fields": "",
+                      "values": false
+                    },
+                    "showPercentChange": false,
+                    "textMode": "auto",
+                    "wideLayout": true
+                  },
+                  "fieldConfig": {
+                    "defaults": {
+                      "unit": "none",
+                      "decimals": 0,
+                      "thresholds": {
+                        "mode": "absolute",
+                        "steps": [
+                          {
+                            "value": 0,
+                            "color": "light-green"
+                          },
+                          {
+                            "value": -0.0001,
+                            "color": "light-green"
+                          },
+                          {
+                            "value": 0.0001,
+                            "color": "semi-dark-orange"
+                          }
+                        ]
+                      },
+                      "color": {
+                        "mode": "thresholds"
+                      },
+                      "noValue": "--"
+                    },
+                    "overrides": []
+                  }
+                }
+              }
+            }
+          },
+          "panel-23": {
+            "kind": "Panel",
+            "spec": {
+              "id": 23,
+              "title": "PVCs in Lost State",
+              "description": "",
+              "links": [],
+              "data": {
+                "kind": "QueryGroup",
+                "spec": {
+                  "queries": [
+                    {
+                      "kind": "PanelQuery",
+                      "spec": {
+                        "query": {
+                          "kind": "DataQuery",
+                          "group": "prometheus",
+                          "version": "v0",
+                          "spec": {
+                            "expr": "count((kube_persistentvolumeclaim_status_phase{namespace=~\"${k8s_namespace}\",phase=\"Lost\"}==1)) or vector(0)",
+                            "instant": true,
+                            "interval": "",
+                            "legendFormat": ""
+                          },
+                          "labels": {
+                            "grafana.app/export-label": "prometheus-1",
+                            "grafana.app/export-datasource-name": "VictoriaMetrics"
+                          }
+                        },
+                        "refId": "A",
+                        "hidden": false
+                      }
+                    }
+                  ],
+                  "transformations": [
+                    {
+                      "kind": "Transformation",
+                      "group": "organize",
+                      "spec": {
+                        "options": {}
+                      }
+                    }
+                  ],
+                  "queryOptions": {}
+                }
+              },
+              "vizConfig": {
+                "kind": "VizConfig",
+                "group": "stat",
+                "version": "13.2.2",
+                "spec": {
+                  "options": {
+                    "colorMode": "background",
+                    "graphMode": "area",
+                    "justifyMode": "auto",
+                    "orientation": "auto",
+                    "percentChangeColorMode": "standard",
+                    "reduceOptions": {
+                      "calcs": [
+                        "mean"
+                      ],
+                      "fields": "",
+                      "values": false
+                    },
+                    "showPercentChange": false,
+                    "textMode": "auto",
+                    "wideLayout": true
+                  },
+                  "fieldConfig": {
+                    "defaults": {
+                      "unit": "none",
+                      "decimals": 0,
+                      "thresholds": {
+                        "mode": "absolute",
+                        "steps": [
+                          {
+                            "value": 0,
+                            "color": "semi-dark-red"
+                          },
+                          {
+                            "value": -0.0001,
+                            "color": "light-green"
+                          },
+                          {
+                            "value": 0.0001,
+                            "color": "semi-dark-red"
+                          }
+                        ]
+                      },
+                      "color": {
+                        "mode": "thresholds"
+                      },
+                      "noValue": "--"
+                    },
+                    "overrides": []
+                  }
+                }
+              }
+            }
+          },
+          "panel-24": {
+            "kind": "Panel",
+            "spec": {
+              "id": 24,
+              "title": "PVCs in Pending State",
+              "description": "",
+              "links": [],
+              "data": {
+                "kind": "QueryGroup",
+                "spec": {
+                  "queries": [
+                    {
+                      "kind": "PanelQuery",
+                      "spec": {
+                        "query": {
+                          "kind": "DataQuery",
+                          "group": "prometheus",
+                          "version": "v0",
+                          "spec": {
+                            "expr": "count((kube_persistentvolumeclaim_status_phase{namespace=~\"${k8s_namespace}\",phase=\"Pending\"}==1)) or vector(0)",
+                            "instant": true,
+                            "interval": "",
+                            "legendFormat": ""
+                          },
+                          "labels": {
+                            "grafana.app/export-label": "prometheus-1",
+                            "grafana.app/export-datasource-name": "VictoriaMetrics"
+                          }
+                        },
+                        "refId": "A",
+                        "hidden": false
+                      }
+                    }
+                  ],
+                  "transformations": [
+                    {
+                      "kind": "Transformation",
+                      "group": "organize",
+                      "spec": {
+                        "options": {}
+                      }
+                    }
+                  ],
+                  "queryOptions": {}
+                }
+              },
+              "vizConfig": {
+                "kind": "VizConfig",
+                "group": "stat",
+                "version": "13.2.2",
+                "spec": {
+                  "options": {
+                    "colorMode": "background",
+                    "graphMode": "area",
+                    "justifyMode": "auto",
+                    "orientation": "auto",
+                    "percentChangeColorMode": "standard",
+                    "reduceOptions": {
+                      "calcs": [
+                        "mean"
+                      ],
+                      "fields": "",
+                      "values": false
+                    },
+                    "showPercentChange": false,
+                    "textMode": "auto",
+                    "wideLayout": true
+                  },
+                  "fieldConfig": {
+                    "defaults": {
+                      "unit": "none",
+                      "decimals": 0,
+                      "thresholds": {
+                        "mode": "absolute",
+                        "steps": [
+                          {
+                            "value": 0,
+                            "color": "semi-dark-red"
+                          },
+                          {
+                            "value": -0.0001,
+                            "color": "light-green"
+                          },
+                          {
+                            "value": 0.0001,
+                            "color": "semi-dark-red"
+                          }
+                        ]
+                      },
+                      "color": {
+                        "mode": "thresholds"
+                      },
+                      "noValue": "--"
+                    },
+                    "overrides": []
+                  }
+                }
+              }
+            }
+          },
+          "panel-27": {
+            "kind": "Panel",
+            "spec": {
+              "id": 27,
+              "title": "PVCs Full in 1 Week - Based on Daily Usage",
+              "description": "",
+              "links": [],
+              "data": {
+                "kind": "QueryGroup",
+                "spec": {
+                  "queries": [
+                    {
+                      "kind": "PanelQuery",
+                      "spec": {
+                        "query": {
+                          "kind": "DataQuery",
+                          "group": "prometheus",
+                          "version": "v0",
+                          "spec": {
+                            "expr": "(\n  count (\n    (kubelet_volume_stats_available_bytes{namespace=~\"${k8s_namespace}\"})\n    and\n    (predict_linear(kubelet_volume_stats_available_bytes{namespace=~\"${k8s_namespace}\"}[1d], 7 * 24 * 60 * 60) < 0)\n  )\n)\nor\nvector(0)",
+                            "instant": true,
+                            "interval": "",
+                            "legendFormat": ""
+                          },
+                          "labels": {
+                            "grafana.app/export-label": "prometheus-1",
+                            "grafana.app/export-datasource-name": "VictoriaMetrics"
+                          }
+                        },
+                        "refId": "A",
+                        "hidden": false
+                      }
+                    }
+                  ],
+                  "transformations": [
+                    {
+                      "kind": "Transformation",
+                      "group": "organize",
+                      "spec": {
+                        "options": {}
+                      }
+                    }
+                  ],
+                  "queryOptions": {}
+                }
+              },
+              "vizConfig": {
+                "kind": "VizConfig",
+                "group": "stat",
+                "version": "13.2.2",
+                "spec": {
+                  "options": {
+                    "colorMode": "background",
+                    "graphMode": "area",
+                    "justifyMode": "auto",
+                    "orientation": "auto",
+                    "percentChangeColorMode": "standard",
+                    "reduceOptions": {
+                      "calcs": [
+                        "mean"
+                      ],
+                      "fields": "",
+                      "values": false
+                    },
+                    "showPercentChange": false,
+                    "textMode": "auto",
+                    "wideLayout": true
+                  },
+                  "fieldConfig": {
+                    "defaults": {
+                      "unit": "none",
+                      "decimals": 0,
+                      "thresholds": {
+                        "mode": "absolute",
+                        "steps": [
+                          {
+                            "value": 0,
+                            "color": "light-green"
+                          },
+                          {
+                            "value": -0.0001,
+                            "color": "light-green"
+                          },
+                          {
+                            "value": 0.0001,
+                            "color": "semi-dark-orange"
+                          }
+                        ]
+                      },
+                      "color": {
+                        "mode": "thresholds"
+                      },
+                      "noValue": "--"
+                    },
+                    "overrides": []
+                  }
+                }
+              }
+            }
+          },
+          "panel-28": {
+            "kind": "Panel",
+            "spec": {
+              "id": 28,
+              "title": "PVCs Full in 5 days - Based on Daily Usage",
+              "description": "",
+              "links": [],
+              "data": {
+                "kind": "QueryGroup",
+                "spec": {
+                  "queries": [
+                    {
+                      "kind": "PanelQuery",
+                      "spec": {
+                        "query": {
+                          "kind": "DataQuery",
+                          "group": "prometheus",
+                          "version": "v0",
+                          "spec": {
+                            "expr": "(\n  count (\n    (kubelet_volume_stats_available_bytes{namespace=~\"${k8s_namespace}\"})\n    and\n    (predict_linear(kubelet_volume_stats_available_bytes{namespace=~\"${k8s_namespace}\"}[1d], 5 * 24 * 60 * 60) < 0)\n  )\n)\nor\nvector(0)",
+                            "instant": true,
+                            "interval": "",
+                            "legendFormat": ""
+                          },
+                          "labels": {
+                            "grafana.app/export-label": "prometheus-1",
+                            "grafana.app/export-datasource-name": "VictoriaMetrics"
+                          }
+                        },
+                        "refId": "A",
+                        "hidden": false
+                      }
+                    }
+                  ],
+                  "transformations": [
+                    {
+                      "kind": "Transformation",
+                      "group": "organize",
+                      "spec": {
+                        "options": {}
+                      }
+                    }
+                  ],
+                  "queryOptions": {}
+                }
+              },
+              "vizConfig": {
+                "kind": "VizConfig",
+                "group": "stat",
+                "version": "13.2.2",
+                "spec": {
+                  "options": {
+                    "colorMode": "background",
+                    "graphMode": "area",
+                    "justifyMode": "auto",
+                    "orientation": "auto",
+                    "percentChangeColorMode": "standard",
+                    "reduceOptions": {
+                      "calcs": [
+                        "mean"
+                      ],
+                      "fields": "",
+                      "values": false
+                    },
+                    "showPercentChange": false,
+                    "textMode": "auto",
+                    "wideLayout": true
+                  },
+                  "fieldConfig": {
+                    "defaults": {
+                      "unit": "none",
+                      "decimals": 0,
+                      "thresholds": {
+                        "mode": "absolute",
+                        "steps": [
+                          {
+                            "value": 0,
+                            "color": "light-green"
+                          },
+                          {
+                            "value": -0.0001,
+                            "color": "light-green"
+                          },
+                          {
+                            "value": 0.0001,
+                            "color": "semi-dark-orange"
+                          }
+                        ]
+                      },
+                      "color": {
+                        "mode": "thresholds"
+                      },
+                      "noValue": "--"
+                    },
+                    "overrides": []
+                  }
+                }
+              }
+            }
+          },
+          "panel-29": {
+            "kind": "Panel",
+            "spec": {
+              "id": 29,
+              "title": "Persistent Volume Claim",
+              "description": "",
+              "links": [],
+              "data": {
+                "kind": "QueryGroup",
+                "spec": {
+                  "queries": [
+                    {
+                      "kind": "PanelQuery",
+                      "spec": {
+                        "query": {
+                          "kind": "DataQuery",
+                          "group": "prometheus",
+                          "version": "v0",
+                          "spec": {
+                            "expr": " sum by (persistentvolumeclaim,namespace,storageclass,volumename) (kube_persistentvolumeclaim_info{namespace=~\"${k8s_namespace}\"})",
+                            "format": "table",
+                            "instant": true,
+                            "interval": "",
+                            "legendFormat": ""
+                          },
+                          "labels": {
+                            "grafana.app/export-label": "prometheus-1",
+                            "grafana.app/export-datasource-name": "VictoriaMetrics"
+                          }
+                        },
+                        "refId": "A",
+                        "hidden": false
+                      }
+                    },
+                    {
+                      "kind": "PanelQuery",
+                      "spec": {
+                        "query": {
+                          "kind": "DataQuery",
+                          "group": "prometheus",
+                          "version": "v0",
+                          "spec": {
+                            "expr": "sum by (persistentvolumeclaim) (kubelet_volume_stats_capacity_bytes{namespace=~\"${k8s_namespace}\"}/1024/1024/1024)",
+                            "format": "table",
+                            "instant": true,
+                            "interval": "",
+                            "legendFormat": ""
+                          },
+                          "labels": {
+                            "grafana.app/export-label": "prometheus-1",
+                            "grafana.app/export-datasource-name": "VictoriaMetrics"
+                          }
+                        },
+                        "refId": "B",
+                        "hidden": false
+                      }
+                    },
+                    {
+                      "kind": "PanelQuery",
+                      "spec": {
+                        "query": {
+                          "kind": "DataQuery",
+                          "group": "prometheus",
+                          "version": "v0",
+                          "spec": {
+                            "expr": "sum by (persistentvolumeclaim) (kubelet_volume_stats_used_bytes{namespace=~\"${k8s_namespace}\"}/1024/1024/1024)",
+                            "format": "table",
+                            "instant": true,
+                            "interval": "",
+                            "legendFormat": ""
+                          },
+                          "labels": {
+                            "grafana.app/export-label": "prometheus-1",
+                            "grafana.app/export-datasource-name": "VictoriaMetrics"
+                          }
+                        },
+                        "refId": "C",
+                        "hidden": false
+                      }
+                    },
+                    {
+                      "kind": "PanelQuery",
+                      "spec": {
+                        "query": {
+                          "kind": "DataQuery",
+                          "group": "prometheus",
+                          "version": "v0",
+                          "spec": {
+                            "expr": "sum by (persistentvolumeclaim) (kubelet_volume_stats_available_bytes{namespace=~\"${k8s_namespace}\"}/1024/1024/1024)",
+                            "format": "table",
+                            "instant": true,
+                            "interval": "",
+                            "legendFormat": ""
+                          },
+                          "labels": {
+                            "grafana.app/export-label": "prometheus-1",
+                            "grafana.app/export-datasource-name": "VictoriaMetrics"
+                          }
+                        },
+                        "refId": "D",
+                        "hidden": false
+                      }
+                    },
+                    {
+                      "kind": "PanelQuery",
+                      "spec": {
+                        "query": {
+                          "kind": "DataQuery",
+                          "group": "prometheus",
+                          "version": "v0",
+                          "spec": {
+                            "expr": "sum(kube_persistentvolumeclaim_status_phase{namespace=~\"${k8s_namespace}\",phase=~\"(Pending|Lost)\"}) by (persistentvolumeclaim) + sum(kube_persistentvolumeclaim_status_phase{namespace=~\"${k8s_namespace}\",phase=~\"(Lost)\"}) by (persistentvolumeclaim)",
+                            "format": "table",
+                            "instant": true,
+                            "interval": "",
+                            "legendFormat": ""
+                          },
+                          "labels": {
+                            "grafana.app/export-label": "prometheus-1",
+                            "grafana.app/export-datasource-name": "VictoriaMetrics"
+                          }
+                        },
+                        "refId": "E",
+                        "hidden": false
+                      }
+                    },
+                    {
+                      "kind": "PanelQuery",
+                      "spec": {
+                        "query": {
+                          "kind": "DataQuery",
+                          "group": "prometheus",
+                          "version": "v0",
+                          "spec": {
+                            "expr": "sum by (persistentvolumeclaim) (kubelet_volume_stats_used_bytes{namespace=~\"${k8s_namespace}\"}/kubelet_volume_stats_capacity_bytes{namespace=~\"${k8s_namespace}\"} * 100)",
+                            "format": "table",
+                            "instant": true,
+                            "interval": "",
+                            "legendFormat": ""
+                          },
+                          "labels": {
+                            "grafana.app/export-label": "prometheus-1",
+                            "grafana.app/export-datasource-name": "VictoriaMetrics"
+                          }
+                        },
+                        "refId": "F",
+                        "hidden": false
+                      }
+                    }
+                  ],
+                  "transformations": [
+                    {
+                      "kind": "Transformation",
+                      "group": "seriesToColumns",
+                      "spec": {
+                        "options": {
+                          "byField": "persistentvolumeclaim"
+                        }
+                      }
+                    },
+                    {
+                      "kind": "Transformation",
+                      "group": "organize",
+                      "spec": {
+                        "options": {
+                          "excludeByName": {
+                            "Time": true,
+                            "Time 1": true,
+                            "Time 2": true,
+                            "Time 3": true,
+                            "Time 4": true,
+                            "Time 5": true,
+                            "Time 6": true,
+                            "Value #A": true
+                          },
+                          "indexByName": {},
+                          "renameByName": {
+                            "Time 1": "",
+                            "Time 2": "",
+                            "Time 3": "",
+                            "Time 4": "",
+                            "Time 5": "",
+                            "Time 6": "",
+                            "Value #A": "",
+                            "Value #B": "Capacity (GiB)",
+                            "Value #C": "Used (GiB)",
+                            "Value #D": "Available (GiB)",
+                            "Value #E": "Status",
+                            "Value #F": "Used (%)",
+                            "namespace": "Namespace",
+                            "persistentvolumeclaim": "PersistentVolumeClaim",
+                            "storageclass": "StorageClass",
+                            "volumename": "PhysicalVolume"
+                          }
+                        }
+                      }
+                    }
+                  ],
+                  "queryOptions": {}
+                }
+              },
+              "vizConfig": {
+                "kind": "VizConfig",
+                "group": "table",
+                "version": "13.2.2",
+                "spec": {
+                  "options": {
+                    "cellHeight": "sm",
+                    "frameIndex": 2,
+                    "showHeader": true,
+                    "sortBy": [
+                      {
+                        "desc": false,
+                        "displayName": "PersistentVolumeClaim"
+                      }
+                    ]
+                  },
+                  "fieldConfig": {
+                    "defaults": {
+                      "unit": "none",
+                      "thresholds": {
+                        "mode": "absolute",
+                        "steps": [
+                          {
+                            "value": 0,
+                            "color": "light-green"
+                          }
+                        ]
+                      },
+                      "color": {
+                        "mode": "thresholds"
+                      },
+                      "noValue": "--",
+                      "custom": {
+                        "align": "auto",
+                        "cellOptions": {
+                          "type": "auto"
+                        },
+                        "filterable": false,
+                        "footer": {
+                          "reducers": []
+                        },
+                        "inspect": false
+                      }
+                    },
+                    "overrides": [
+                      {
+                        "matcher": {
+                          "id": "byName",
+                          "options": "Used (%)"
+                        },
+                        "properties": [
+                          {
+                            "id": "custom.cellOptions",
+                            "value": {
+                              "mode": "gradient",
+                              "type": "gauge"
+                            }
+                          },
+                          {
+                            "id": "thresholds",
+                            "value": {
+                              "mode": "absolute",
+                              "steps": [
+                                {
+                                  "color": "light-green",
+                                  "value": 0
+                                },
+                                {
+                                  "color": "semi-dark-yellow",
+                                  "value": 70
+                                },
+                                {
+                                  "color": "dark-red",
+                                  "value": 80
+                                }
+                              ]
+                            }
+                          },
+                          {
+                            "id": "decimals",
+                            "value": 1
+                          }
+                        ]
+                      },
+                      {
+                        "matcher": {
+                          "id": "byName",
+                          "options": "Status"
+                        },
+                        "properties": [
+                          {
+                            "id": "custom.cellOptions",
+                            "value": {
+                              "mode": "gradient",
+                              "type": "color-background"
+                            }
+                          },
+                          {
+                            "id": "mappings",
+                            "value": [
+                              {
+                                "options": {
+                                  "0": {
+                                    "text": "Bound"
+                                  },
+                                  "1": {
+                                    "text": "Pending"
+                                  },
+                                  "2": {
+                                    "text": "Lost"
+                                  }
+                                },
+                                "type": "value"
+                              }
+                            ]
+                          },
+                          {
+                            "id": "thresholds",
+                            "value": {
+                              "mode": "absolute",
+                              "steps": [
+                                {
+                                  "color": "light-green",
+                                  "value": 0
+                                },
+                                {
+                                  "color": "light-green",
+                                  "value": 0
+                                },
+                                {
+                                  "color": "semi-dark-orange",
+                                  "value": 1
+                                },
+                                {
+                                  "color": "semi-dark-red",
+                                  "value": 2
+                                }
+                              ]
+                            }
+                          },
+                          {
+                            "id": "noValue",
+                            "value": "--"
+                          },
+                          {
+                            "id": "custom.align",
+                            "value": "center"
+                          }
+                        ]
+                      },
+                      {
+                        "matcher": {
+                          "id": "byName",
+                          "options": "Namespace"
+                        },
+                        "properties": [
+                          {
+                            "id": "custom.width",
+                            "value": 120
+                          }
+                        ]
+                      },
+                      {
+                        "matcher": {
+                          "id": "byName",
+                          "options": "Status"
+                        },
+                        "properties": [
+                          {
+                            "id": "custom.width",
+                            "value": 80
+                          }
+                        ]
+                      },
+                      {
+                        "matcher": {
+                          "id": "byName",
+                          "options": "Capacity (GiB)"
+                        },
+                        "properties": [
+                          {
+                            "id": "custom.width",
+                            "value": 120
+                          }
+                        ]
+                      },
+                      {
+                        "matcher": {
+                          "id": "byName",
+                          "options": "Used (GiB)"
+                        },
+                        "properties": [
+                          {
+                            "id": "custom.width",
+                            "value": 120
+                          }
+                        ]
+                      },
+                      {
+                        "matcher": {
+                          "id": "byName",
+                          "options": "Available (GiB)"
+                        },
+                        "properties": [
+                          {
+                            "id": "custom.width",
+                            "value": 120
+                          }
+                        ]
+                      },
+                      {
+                        "matcher": {
+                          "id": "byName",
+                          "options": "StorageClass"
+                        },
+                        "properties": [
+                          {
+                            "id": "custom.width",
+                            "value": 150
+                          }
+                        ]
+                      },
+                      {
+                        "matcher": {
+                          "id": "byName",
+                          "options": "PersistentVolumeClaim"
+                        },
+                        "properties": [
+                          {
+                            "id": "custom.width",
+                            "value": 370
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                }
+              }
+            }
+          },
+          "panel-7": {
+            "kind": "Panel",
+            "spec": {
+              "id": 7,
+              "title": "Storage Class",
+              "description": "",
+              "links": [],
+              "data": {
+                "kind": "QueryGroup",
+                "spec": {
+                  "queries": [
+                    {
+                      "kind": "PanelQuery",
+                      "spec": {
+                        "query": {
+                          "kind": "DataQuery",
+                          "group": "prometheus",
+                          "version": "v0",
+                          "spec": {
+                            "expr": "kube_storageclass_info",
+                            "format": "table",
+                            "interval": "",
+                            "legendFormat": ""
+                          },
+                          "labels": {
+                            "grafana.app/export-label": "prometheus-1",
+                            "grafana.app/export-datasource-name": "VictoriaMetrics"
+                          }
+                        },
+                        "refId": "A",
+                        "hidden": false
+                      }
+                    }
+                  ],
+                  "transformations": [
+                    {
+                      "kind": "Transformation",
+                      "group": "organize",
+                      "spec": {
+                        "options": {
+                          "excludeByName": {
+                            "Time": true,
+                            "Value": true,
+                            "__name__": true,
+                            "app_kubernetes_io_instance": true,
+                            "app_kubernetes_io_name": true,
+                            "instance": true,
+                            "job": true,
+                            "kubernetes_namespace": true,
+                            "kubernetes_pod_name": true,
+                            "pod_template_hash": true
+                          },
+                          "indexByName": {
+                            "Time": 1,
+                            "Value": 13,
+                            "__name__": 2,
+                            "app_kubernetes_io_instance": 3,
+                            "app_kubernetes_io_name": 4,
+                            "instance": 5,
+                            "job": 6,
+                            "kubernetes_namespace": 7,
+                            "kubernetes_pod_name": 8,
+                            "pod_template_hash": 9,
+                            "provisioner": 10,
+                            "reclaimPolicy": 11,
+                            "storageclass": 0,
+                            "volumeBindingMode": 12
+                          },
+                          "renameByName": {
+                            "provisioner": "Provisioner",
+                            "reclaimPolicy": "ReclaimPolicy",
+                            "storageclass": "StorageClass",
+                            "volumeBindingMode": "VolumeBindingMode"
+                          }
+                        }
+                      }
+                    },
+                    {
+                      "kind": "Transformation",
+                      "group": "groupBy",
+                      "spec": {
+                        "options": {
+                          "fields": {
+                            "Provisioner": {
+                              "aggregations": [],
+                              "operation": "groupby"
+                            },
+                            "ReclaimPolicy": {
+                              "aggregations": [],
+                              "operation": "groupby"
+                            },
+                            "StorageClass": {
+                              "aggregations": [],
+                              "operation": "groupby"
+                            },
+                            "VolumeBindingMode": {
+                              "aggregations": [],
+                              "operation": "groupby"
+                            }
+                          }
+                        }
+                      }
+                    }
+                  ],
+                  "queryOptions": {}
+                }
+              },
+              "vizConfig": {
+                "kind": "VizConfig",
+                "group": "table",
+                "version": "13.2.2",
+                "spec": {
+                  "options": {
+                    "cellHeight": "sm",
+                    "showHeader": true,
+                    "sortBy": [
+                      {
+                        "desc": true,
+                        "displayName": "Status"
+                      }
+                    ]
+                  },
+                  "fieldConfig": {
+                    "defaults": {
+                      "thresholds": {
+                        "mode": "absolute",
+                        "steps": [
+                          {
+                            "value": 0,
+                            "color": "green"
+                          }
+                        ]
+                      },
+                      "custom": {
+                        "align": "auto",
+                        "cellOptions": {
+                          "type": "auto"
+                        },
+                        "filterable": false,
+                        "footer": {
+                          "reducers": []
+                        },
+                        "inspect": false
+                      }
+                    },
+                    "overrides": []
+                  }
+                }
+              }
+            }
+          },
+          "panel-9": {
+            "kind": "Panel",
+            "spec": {
+              "id": 9,
+              "title": "All Running PVCs Used Bytes",
+              "description": "",
+              "links": [],
+              "data": {
+                "kind": "QueryGroup",
+                "spec": {
+                  "queries": [
+                    {
+                      "kind": "PanelQuery",
+                      "spec": {
+                        "query": {
+                          "kind": "DataQuery",
+                          "group": "prometheus",
+                          "version": "v0",
+                          "spec": {
+                            "expr": "(max by (persistentvolumeclaim,namespace) (kubelet_volume_stats_used_bytes{namespace=~\"${k8s_namespace}\"}))",
+                            "interval": "",
+                            "legendFormat": "{{namespace}} ({{persistentvolumeclaim}})"
+                          },
+                          "labels": {
+                            "grafana.app/export-label": "prometheus-1",
+                            "grafana.app/export-datasource-name": "VictoriaMetrics"
+                          }
+                        },
+                        "refId": "A",
+                        "hidden": false
+                      }
+                    }
+                  ],
+                  "transformations": [],
+                  "queryOptions": {}
+                }
+              },
+              "vizConfig": {
+                "kind": "VizConfig",
+                "group": "timeseries",
+                "version": "13.2.2",
+                "spec": {
+                  "options": {
+                    "alertThreshold": true,
+                    "legend": {
+                      "calcs": [
+                        "mean",
+                        "lastNotNull",
+                        "max",
+                        "min"
+                      ],
+                      "displayMode": "table",
+                      "placement": "right",
+                      "showLegend": true
+                    },
+                    "tooltip": {
+                      "hideZeros": false,
+                      "mode": "multi",
+                      "sort": "desc"
+                    }
+                  },
+                  "fieldConfig": {
+                    "defaults": {
+                      "unit": "bytes",
+                      "thresholds": {
+                        "mode": "absolute",
+                        "steps": [
+                          {
+                            "value": 0,
+                            "color": "green"
+                          },
+                          {
+                            "value": 80,
+                            "color": "red"
+                          }
+                        ]
+                      },
+                      "color": {
+                        "mode": "palette-classic"
+                      },
+                      "custom": {
+                        "axisBorderShow": false,
+                        "axisCenteredZero": false,
+                        "axisColorMode": "text",
+                        "axisLabel": "",
+                        "axisPlacement": "auto",
+                        "barAlignment": 0,
+                        "barWidthFactor": 0.6,
+                        "drawStyle": "line",
+                        "fillOpacity": 0,
+                        "gradientMode": "none",
+                        "hideFrom": {
+                          "legend": false,
+                          "tooltip": false,
+                          "viz": false
+                        },
+                        "insertNulls": false,
+                        "lineInterpolation": "linear",
+                        "lineWidth": 1,
+                        "pointSize": 5,
+                        "scaleDistribution": {
+                          "type": "linear"
+                        },
+                        "showPoints": "never",
+                        "showValues": false,
+                        "spanNulls": false,
+                        "stacking": {
+                          "group": "A",
+                          "mode": "none"
+                        },
+                        "thresholdsStyle": {
+                          "mode": "off"
+                        }
+                      }
+                    },
+                    "overrides": []
+                  }
+                }
+              }
+            }
+          }
+        },
+        "layout": {
+          "kind": "RowsLayout",
+          "spec": {
+            "rows": [
+              {
+                "kind": "RowsLayoutRow",
+                "spec": {
+                  "title": "Alerts",
+                  "collapse": false,
+                  "layout": {
+                    "kind": "GridLayout",
+                    "spec": {
+                      "items": [
+                        {
+                          "kind": "GridLayoutItem",
+                          "spec": {
+                            "x": 0,
+                            "y": 0,
+                            "width": 8,
+                            "height": 4,
+                            "element": {
+                              "kind": "ElementReference",
+                              "name": "panel-22"
+                            }
+                          }
+                        },
+                        {
+                          "kind": "GridLayoutItem",
+                          "spec": {
+                            "x": 8,
+                            "y": 0,
+                            "width": 8,
+                            "height": 4,
+                            "element": {
+                              "kind": "ElementReference",
+                              "name": "panel-28"
+                            }
+                          }
+                        },
+                        {
+                          "kind": "GridLayoutItem",
+                          "spec": {
+                            "x": 16,
+                            "y": 0,
+                            "width": 8,
+                            "height": 4,
+                            "element": {
+                              "kind": "ElementReference",
+                              "name": "panel-27"
+                            }
+                          }
+                        },
+                        {
+                          "kind": "GridLayoutItem",
+                          "spec": {
+                            "x": 0,
+                            "y": 4,
+                            "width": 8,
+                            "height": 4,
+                            "element": {
+                              "kind": "ElementReference",
+                              "name": "panel-21"
+                            }
+                          }
+                        },
+                        {
+                          "kind": "GridLayoutItem",
+                          "spec": {
+                            "x": 8,
+                            "y": 4,
+                            "width": 8,
+                            "height": 4,
+                            "element": {
+                              "kind": "ElementReference",
+                              "name": "panel-24"
+                            }
+                          }
+                        },
+                        {
+                          "kind": "GridLayoutItem",
+                          "spec": {
+                            "x": 16,
+                            "y": 4,
+                            "width": 8,
+                            "height": 4,
+                            "element": {
+                              "kind": "ElementReference",
+                              "name": "panel-23"
+                            }
+                          }
+                        }
+                      ]
+                    }
+                  }
+                }
+              },
+              {
+                "kind": "RowsLayoutRow",
+                "spec": {
+                  "title": "Usage statistics",
+                  "collapse": false,
+                  "layout": {
+                    "kind": "GridLayout",
+                    "spec": {
+                      "items": [
+                        {
+                          "kind": "GridLayoutItem",
+                          "spec": {
+                            "x": 0,
+                            "y": 0,
+                            "width": 24,
+                            "height": 12,
+                            "element": {
+                              "kind": "ElementReference",
+                              "name": "panel-29"
+                            }
+                          }
+                        },
+                        {
+                          "kind": "GridLayoutItem",
+                          "spec": {
+                            "x": 0,
+                            "y": 12,
+                            "width": 24,
+                            "height": 5,
+                            "element": {
+                              "kind": "ElementReference",
+                              "name": "panel-7"
+                            }
+                          }
+                        }
+                      ]
+                    }
+                  }
+                }
+              },
+              {
+                "kind": "RowsLayoutRow",
+                "spec": {
+                  "title": "Graphical usage data ",
+                  "collapse": false,
+                  "layout": {
+                    "kind": "GridLayout",
+                    "spec": {
+                      "items": [
+                        {
+                          "kind": "GridLayoutItem",
+                          "spec": {
+                            "x": 0,
+                            "y": 0,
+                            "width": 24,
+                            "height": 12,
+                            "element": {
+                              "kind": "ElementReference",
+                              "name": "panel-9"
+                            }
+                          }
+                        }
+                      ]
+                    }
+                  }
+                }
+              },
+              {
+                "kind": "RowsLayoutRow",
+                "spec": {
+                  "title": "Usage Rate",
+                  "collapse": true,
+                  "layout": {
+                    "kind": "GridLayout",
+                    "spec": {
+                      "items": [
+                        {
+                          "kind": "GridLayoutItem",
+                          "spec": {
+                            "x": 0,
+                            "y": 0,
+                            "width": 24,
+                            "height": 7,
+                            "element": {
+                              "kind": "ElementReference",
+                              "name": "panel-11"
+                            }
+                          }
+                        },
+                        {
+                          "kind": "GridLayoutItem",
+                          "spec": {
+                            "x": 0,
+                            "y": 7,
+                            "width": 24,
+                            "height": 7,
+                            "element": {
+                              "kind": "ElementReference",
+                              "name": "panel-12"
+                            }
+                          }
+                        },
+                        {
+                          "kind": "GridLayoutItem",
+                          "spec": {
+                            "x": 0,
+                            "y": 14,
+                            "width": 24,
+                            "height": 7,
+                            "element": {
+                              "kind": "ElementReference",
+                              "name": "panel-13"
+                            }
+                          }
+                        }
+                      ]
+                    }
+                  }
+                }
+              }
+            ]
+          }
+        },
+        "links": [],
+        "liveNow": false,
+        "preload": false,
+        "tags": [],
+        "timeSettings": {
+          "timezone": "browser",
+          "from": "now-24h",
+          "to": "now",
+          "autoRefresh": "1m",
+          "autoRefreshIntervals": [
+            "5s",
+            "10s",
+            "30s",
+            "1m",
+            "5m",
+            "15m",
+            "30m",
+            "1h",
+            "2h",
+            "1d"
+          ],
+          "hideTimepicker": false,
+          "fiscalYearStartMonth": 0
+        },
+        "title": "Kubernetes / Persistent Volumes",
+        "variables": [
+          {
+            "kind": "DatasourceVariable",
+            "spec": {
+              "name": "datasource",
+              "pluginId": "prometheus",
+              "refresh": "onDashboardLoad",
+              "regex": "",
+              "current": {
+                "text": "",
+                "value": ""
+              },
+              "options": [],
+              "multi": false,
+              "includeAll": false,
+              "label": "Datasource",
+              "hide": "dontHide",
+              "skipUrlSync": false,
+              "allowCustomValue": true
+            }
+          },
+          {
+            "kind": "QueryVariable",
+            "spec": {
+              "name": "k8s_namespace",
+              "current": {
+                "text": "",
+                "value": ""
+              },
+              "label": "Namespace",
+              "hide": "dontHide",
+              "refresh": "onTimeRangeChanged",
+              "skipUrlSync": false,
+              "query": {
+                "kind": "DataQuery",
+                "group": "prometheus",
+                "version": "v0",
+                "spec": {
+                  "__legacyStringValue": "label_values(namespace)"
+                },
+                "labels": {
+                  "grafana.app/export-label": "prometheus-1",
+                  "grafana.app/export-datasource-name": "VictoriaMetrics"
+                }
+              },
+              "regex": "",
+              "regexApplyTo": "value",
+              "sort": "alphabeticalAsc",
+              "definition": "label_values(namespace)",
+              "options": [],
+              "multi": true,
+              "includeAll": true,
+              "allValue": ".*",
+              "allowCustomValue": true
+            }
+          },
+          {
+            "kind": "TextVariable",
+            "spec": {
+              "name": "warning_threshold",
+              "current": {
+                "text": "80",
+                "value": "80"
+              },
+              "query": "80",
+              "label": "PVC % Used Warning Threshold",
+              "hide": "hideVariable",
+              "skipUrlSync": false
+            }
+          }
+        ]
+      }
+    }
+kind: ConfigMap
+metadata:
+  name: kubernetes-persistent-volumes-grafana-dashboard
+  namespace: kube-system
+  labels:
+    grafana_dashboard: "1"

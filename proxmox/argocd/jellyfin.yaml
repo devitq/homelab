@@ -14,7 +14,7 @@ spec:
         replicaCount: 1
         persistence:
           config:
-            size: 16Gi
+            size: 20Gi
           media:
             size: 100Gi
         metrics:
